@@ -1,15 +1,29 @@
 """CareLens FastAPI application entry point."""
 
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
-from typing import Any, Dict
+from typing import Any, AsyncGenerator, Dict
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.api.auth import router as auth_router
+from app.db.session import create_db_and_tables
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    """Execute startup and shutdown tasks."""
+    # Ensure database tables exist
+    create_db_and_tables()
+    yield
+
 
 app = FastAPI(
     title="CareLens API",
     description="Unified clinical view across EHR, lab, pharmacy, and insurer systems.",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -19,6 +33,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount authentication routes
+app.include_router(auth_router)
 
 
 @app.get("/health")

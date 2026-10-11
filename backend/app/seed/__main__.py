@@ -1,6 +1,6 @@
-"""Module runner for seeding database."""
+"""CLI execution module for app.seed."""
 
-from app.seed.seed import run_seed
+from app.seed import run_seed
 
 if __name__ == "__main__":
     run_seed()

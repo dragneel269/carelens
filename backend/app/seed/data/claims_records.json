@@ -1,0 +1,158 @@
+[
+  {
+    "insurer_name": "Star Health & Allied Insurance",
+    "policyholder_id": "STAR-48221",
+    "patient_name": "R. Kumar",
+    "dob": "1968-03-14",
+    "gender": "male",
+    "phone": "90000 12345",
+    "pincode": "570001",
+    "policy_number": "SH-DIAB-2026-901",
+    "claims": [
+      {
+        "claim_id": "CLM-4011",
+        "service_date": "2026-06-12T00:00:00Z",
+        "claimed_amount": 1450.0,
+        "approved_amount": 1450.0,
+        "status": "APPROVED",
+        "category": "OPD_CONSULT_AND_LABS",
+        "description": "Diabetic evaluation and Glycated Hb diagnostic workup"
+      },
+      {
+        "claim_id": "CLM-4890",
+        "service_date": "2026-09-20T00:00:00Z",
+        "claimed_amount": 2800.0,
+        "approved_amount": 0.0,
+        "status": "PENDING",
+        "category": "SPECIALIST_REVIEW",
+        "description": "Endocrinology consultation and multi-system medication review"
+      }
+    ]
+  },
+  {
+    "insurer_name": "Star Health & Allied Insurance",
+    "policyholder_id": "STAR-FAK-0001",
+    "patient_name": "Ananya Deshmukh",
+    "dob": "1984-06-22",
+    "gender": "female",
+    "phone": "90000 21001",
+    "pincode": "560002",
+    "policy_number": "SH-STD-2026-001",
+    "claims": [
+      {
+        "claim_id": "CLM-FAK-1",
+        "service_date": "2026-07-01T00:00:00Z",
+        "claimed_amount": 1200.0,
+        "approved_amount": 1200.0,
+        "status": "APPROVED",
+        "category": "OPD_CONSULT",
+        "description": "Routine medical checkup and prescription cover"
+      }
+    ]
+  },
+  {
+    "insurer_name": "Star Health & Allied Insurance",
+    "policyholder_id": "STAR-FAK-0003",
+    "patient_name": "Kavita Subramanian",
+    "dob": "1991-02-18",
+    "gender": "female",
+    "phone": "90000 21003",
+    "pincode": "600001",
+    "policy_number": "SH-STD-2026-003",
+    "claims": [
+      {
+        "claim_id": "CLM-FAK-3",
+        "service_date": "2026-07-01T00:00:00Z",
+        "claimed_amount": 1200.0,
+        "approved_amount": 1200.0,
+        "status": "APPROVED",
+        "category": "OPD_CONSULT",
+        "description": "Routine medical checkup and prescription cover"
+      }
+    ]
+  },
+  {
+    "insurer_name": "Star Health & Allied Insurance",
+    "policyholder_id": "STAR-FAK-0004",
+    "patient_name": "Arjun Singhania",
+    "dob": "1965-09-30",
+    "gender": "male",
+    "phone": "90000 21004",
+    "pincode": "400001",
+    "policy_number": "SH-STD-2026-004",
+    "claims": [
+      {
+        "claim_id": "CLM-FAK-4",
+        "service_date": "2026-07-01T00:00:00Z",
+        "claimed_amount": 1200.0,
+        "approved_amount": 1200.0,
+        "status": "APPROVED",
+        "category": "OPD_CONSULT",
+        "description": "Routine medical checkup and prescription cover"
+      }
+    ]
+  },
+  {
+    "insurer_name": "Star Health & Allied Insurance",
+    "policyholder_id": "STAR-FAK-0007",
+    "patient_name": "Pooja Hegde",
+    "dob": "1995-07-25",
+    "gender": "female",
+    "phone": "90000 21007",
+    "pincode": "575001",
+    "policy_number": "SH-STD-2026-007",
+    "claims": [
+      {
+        "claim_id": "CLM-FAK-7",
+        "service_date": "2026-07-01T00:00:00Z",
+        "claimed_amount": 1200.0,
+        "approved_amount": 1200.0,
+        "status": "APPROVED",
+        "category": "OPD_CONSULT",
+        "description": "Routine medical checkup and prescription cover"
+      }
+    ]
+  },
+  {
+    "insurer_name": "Star Health & Allied Insurance",
+    "policyholder_id": "STAR-FAK-0008",
+    "patient_name": "Rajeshwari Iyer",
+    "dob": "1960-01-19",
+    "gender": "female",
+    "phone": "90000 21008",
+    "pincode": "641001",
+    "policy_number": "SH-STD-2026-008",
+    "claims": [
+      {
+        "claim_id": "CLM-FAK-8",
+        "service_date": "2026-07-01T00:00:00Z",
+        "claimed_amount": 1200.0,
+        "approved_amount": 1200.0,
+        "status": "APPROVED",
+        "category": "OPD_CONSULT",
+        "description": "Routine medical checkup and prescription cover"
+      }
+    ]
+  },
+  {
+    "insurer_name": "Star Health & Allied Insurance",
+    "policyholder_id": "STAR-FAK-0009",
+    "patient_name": "Tariq Mansoori",
+    "dob": "1982-10-08",
+    "gender": "male",
+    "phone": "90000 21009",
+    "pincode": "226001",
+    "policy_number": "SH-STD-2026-009",
+    "claims": [
+      {
+        "claim_id": "CLM-FAK-9",
+        "service_date": "2026-07-01T00:00:00Z",
+        "claimed_amount": 1200.0,
+        "approved_amount": 1200.0,
+        "status": "APPROVED",
+        "category": "OPD_CONSULT",
+        "description": "Routine medical checkup and prescription cover"
+      }
+    ]
+  }
+]

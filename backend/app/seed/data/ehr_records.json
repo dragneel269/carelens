@@ -1,0 +1,721 @@
+[
+  {
+    "resourceType": "Bundle",
+    "id": "APL-004512-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-004512",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-004512"
+            }
+          ],
+          "name": [
+            {
+              "text": "Ramesh Kumar",
+              "family": "Kumar",
+              "given": [
+                "Ramesh"
+              ]
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1968-03-14",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 12345"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570001",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "COND-001",
+          "subject": {
+            "reference": "Patient/APL-004512"
+          },
+          "code": {
+            "text": "Type 2 diabetes mellitus",
+            "coding": [
+              {
+                "code": "E11",
+                "display": "Type 2 diabetes mellitus"
+              }
+            ]
+          },
+          "recordedDate": "2026-05-10T10:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "COND-002",
+          "subject": {
+            "reference": "Patient/APL-004512"
+          },
+          "code": {
+            "text": "Essential hypertension",
+            "coding": [
+              {
+                "code": "I10",
+                "display": "Essential hypertension"
+              }
+            ]
+          },
+          "recordedDate": "2026-05-10T10:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "AllergyIntolerance",
+          "id": "ALLERGY-001",
+          "subject": {
+            "reference": "Patient/APL-004512"
+          },
+          "clinicalStatus": "active",
+          "criticality": "high",
+          "substance": {
+            "text": "Penicillin",
+            "class": "penicillin"
+          },
+          "reaction": [
+            {
+              "manifestation": [
+                {
+                  "text": "Anaphylaxis and generalized urticaria"
+                }
+              ]
+            }
+          ],
+          "recordedDate": "2026-05-10T10:15:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Encounter",
+          "id": "ENC-001",
+          "subject": {
+            "reference": "Patient/APL-004512"
+          },
+          "period": {
+            "start": "2026-05-10T09:30:00Z",
+            "end": "2026-05-10T10:30:00Z"
+          },
+          "reasonCode": [
+            {
+              "text": "Initial comprehensive diabetes & hypertension consult"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Encounter",
+          "id": "ENC-002",
+          "subject": {
+            "reference": "Patient/APL-004512"
+          },
+          "period": {
+            "start": "2026-08-01T11:00:00Z",
+            "end": "2026-08-01T11:45:00Z"
+          },
+          "reasonCode": [
+            {
+              "text": "Routine diabetic review & blood pressure check"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Encounter",
+          "id": "ENC-003",
+          "subject": {
+            "reference": "Patient/APL-004512"
+          },
+          "period": {
+            "start": "2026-09-14T10:00:00Z",
+            "end": "2026-09-14T10:40:00Z"
+          },
+          "reasonCode": [
+            {
+              "text": "Quarterly metabolic follow-up & lab orders"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "MED-001",
+          "subject": {
+            "reference": "Patient/APL-004512"
+          },
+          "medicationCodeableConcept": {
+            "text": "metformin 500mg",
+            "generic": "metformin"
+          },
+          "authoredOn": "2026-05-10T10:20:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "MED-002",
+          "subject": {
+            "reference": "Patient/APL-004512"
+          },
+          "medicationCodeableConcept": {
+            "text": "telmisartan 40mg",
+            "generic": "telmisartan"
+          },
+          "authoredOn": "2026-05-10T10:20:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-FAK-0001-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-FAK-0001",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-FAK-0001"
+            }
+          ],
+          "name": [
+            {
+              "text": "Ananya Deshmukh"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1984-06-22",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 21001"
+            }
+          ],
+          "address": [
+            {
+              "city": "Bengaluru",
+              "postalCode": "560002"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "COND-FAK-1",
+          "subject": {
+            "reference": "Patient/APL-FAK-0001"
+          },
+          "code": {
+            "text": "Essential hypertension"
+          },
+          "recordedDate": "2026-06-01T10:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "MED-FAK-1",
+          "subject": {
+            "reference": "Patient/APL-FAK-0001"
+          },
+          "medicationCodeableConcept": {
+            "text": "Telma 40",
+            "generic": "telmisartan"
+          },
+          "authoredOn": "2026-06-01T10:15:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-FAK-0002-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-FAK-0002",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-FAK-0002"
+            }
+          ],
+          "name": [
+            {
+              "text": "Vikramaditya Rao"
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1972-11-04",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 21002"
+            }
+          ],
+          "address": [
+            {
+              "city": "Hyderabad",
+              "postalCode": "500034"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "COND-FAK-2",
+          "subject": {
+            "reference": "Patient/APL-FAK-0002"
+          },
+          "code": {
+            "text": "Essential hypertension"
+          },
+          "recordedDate": "2026-06-01T10:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "MED-FAK-2",
+          "subject": {
+            "reference": "Patient/APL-FAK-0002"
+          },
+          "medicationCodeableConcept": {
+            "text": "Telma 40",
+            "generic": "telmisartan"
+          },
+          "authoredOn": "2026-06-01T10:15:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-FAK-0003-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-FAK-0003",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-FAK-0003"
+            }
+          ],
+          "name": [
+            {
+              "text": "Kavita Subramanian"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1991-02-18",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 21003"
+            }
+          ],
+          "address": [
+            {
+              "city": "Chennai",
+              "postalCode": "600001"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "COND-FAK-3",
+          "subject": {
+            "reference": "Patient/APL-FAK-0003"
+          },
+          "code": {
+            "text": "Essential hypertension"
+          },
+          "recordedDate": "2026-06-01T10:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "MED-FAK-3",
+          "subject": {
+            "reference": "Patient/APL-FAK-0003"
+          },
+          "medicationCodeableConcept": {
+            "text": "Telma 40",
+            "generic": "telmisartan"
+          },
+          "authoredOn": "2026-06-01T10:15:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-FAK-0004-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-FAK-0004",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-FAK-0004"
+            }
+          ],
+          "name": [
+            {
+              "text": "Arjun Singhania"
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1965-09-30",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 21004"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mumbai",
+              "postalCode": "400001"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "COND-FAK-4",
+          "subject": {
+            "reference": "Patient/APL-FAK-0004"
+          },
+          "code": {
+            "text": "Essential hypertension"
+          },
+          "recordedDate": "2026-06-01T10:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "MED-FAK-4",
+          "subject": {
+            "reference": "Patient/APL-FAK-0004"
+          },
+          "medicationCodeableConcept": {
+            "text": "Telma 40",
+            "generic": "telmisartan"
+          },
+          "authoredOn": "2026-06-01T10:15:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-FAK-0006-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-FAK-0006",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-FAK-0006"
+            }
+          ],
+          "name": [
+            {
+              "text": "Deepak Ganguly"
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1979-04-09",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 21006"
+            }
+          ],
+          "address": [
+            {
+              "city": "Kolkata",
+              "postalCode": "700001"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "COND-FAK-6",
+          "subject": {
+            "reference": "Patient/APL-FAK-0006"
+          },
+          "code": {
+            "text": "Essential hypertension"
+          },
+          "recordedDate": "2026-06-01T10:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "MED-FAK-6",
+          "subject": {
+            "reference": "Patient/APL-FAK-0006"
+          },
+          "medicationCodeableConcept": {
+            "text": "Telma 40",
+            "generic": "telmisartan"
+          },
+          "authoredOn": "2026-06-01T10:15:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-FAK-0007-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-FAK-0007",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-FAK-0007"
+            }
+          ],
+          "name": [
+            {
+              "text": "Pooja Hegde"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1995-07-25",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 21007"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mangaluru",
+              "postalCode": "575001"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "COND-FAK-7",
+          "subject": {
+            "reference": "Patient/APL-FAK-0007"
+          },
+          "code": {
+            "text": "Essential hypertension"
+          },
+          "recordedDate": "2026-06-01T10:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "MED-FAK-7",
+          "subject": {
+            "reference": "Patient/APL-FAK-0007"
+          },
+          "medicationCodeableConcept": {
+            "text": "Telma 40",
+            "generic": "telmisartan"
+          },
+          "authoredOn": "2026-06-01T10:15:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-FAK-0008-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-FAK-0008",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-FAK-0008"
+            }
+          ],
+          "name": [
+            {
+              "text": "Rajeshwari Iyer"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1960-01-19",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 21008"
+            }
+          ],
+          "address": [
+            {
+              "city": "Coimbatore",
+              "postalCode": "641001"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "COND-FAK-8",
+          "subject": {
+            "reference": "Patient/APL-FAK-0008"
+          },
+          "code": {
+            "text": "Essential hypertension"
+          },
+          "recordedDate": "2026-06-01T10:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "MED-FAK-8",
+          "subject": {
+            "reference": "Patient/APL-FAK-0008"
+          },
+          "medicationCodeableConcept": {
+            "text": "Telma 40",
+            "generic": "telmisartan"
+          },
+          "authoredOn": "2026-06-01T10:15:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-AMB-01A-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-AMB-01A",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-AMB-01A"
+            }
+          ],
+          "name": [
+            {
+              "text": "Suresh Patel"
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1974-05-12",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 33001"
+            }
+          ],
+          "address": [
+            {
+              "city": "Ahmedabad",
+              "postalCode": "380001"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-AMB-02A-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-AMB-02A",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-AMB-02A"
+            }
+          ],
+          "name": [
+            {
+              "text": "Priya Sharma"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1990-08-15",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 44001"
+            }
+          ],
+          "address": [
+            {
+              "city": "Delhi",
+              "postalCode": "110001"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]
