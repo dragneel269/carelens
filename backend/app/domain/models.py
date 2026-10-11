@@ -257,3 +257,44 @@ class ReviewItem(SQLModel, table=True):
         nullable=False,
     )
 
+
+class Consent(SQLModel, table=True):
+    """Patient consent grant allowing specific role group access to categories."""
+
+    __tablename__ = "consents"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    clid: str = Field(index=True, nullable=False)
+    group: str = Field(index=True, nullable=False)  # "clinicians", "pharmacy", "lab", "billing"
+    categories: str = Field(nullable=False)  # Comma-separated categories
+    purpose: str = Field(default="treatment", nullable=False)  # "treatment", "payment"
+    valid_to: datetime = Field(nullable=False)
+    status: str = Field(default="active", index=True, nullable=False)  # active, revoked, expired
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+
+class AuditEntry(SQLModel, table=True):
+    """Append-only cryptographic hash-chained audit log entry."""
+
+    __tablename__ = "audit_entries"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    ts: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        index=True,
+        nullable=False,
+    )
+    actor: str = Field(index=True, nullable=False)
+    role: str = Field(index=True, nullable=False)
+    clid: Optional[str] = Field(default=None, index=True)
+    action: str = Field(nullable=False)  # "read", "verify", "revoke", "consent_create", etc.
+    categories: str = Field(default="", nullable=False)
+    decision: str = Field(nullable=False)  # "ALLOW", "DENY"
+    reason: str = Field(default="", nullable=False)
+    prev_hash: str = Field(nullable=False)
+    hash: str = Field(nullable=False)
+
+

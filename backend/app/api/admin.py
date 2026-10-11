@@ -9,8 +9,10 @@ from app.api.deps import require_role
 from app.db.session import get_session
 from app.domain.models import (
     Allergy,
+    AuditEntry,
     Claim,
     Condition,
+    Consent,
     Encounter,
     IdentityLink,
     IngestReject,
@@ -48,7 +50,9 @@ def trigger_ingest(session: Session = Depends(get_session)) -> Dict[str, Any]:
 )
 def reset_demo(session: Session = Depends(get_session)) -> Dict[str, Any]:
     """Admin-only endpoint to reset the demo environment to fresh seed state."""
-    # Wipe clinical data and identity linkage tables
+    # Wipe clinical data, consents, audit entries, and identity linkage tables
+    session.exec(delete(AuditEntry))
+    session.exec(delete(Consent))
     session.exec(delete(IdentityLink))
     session.exec(delete(ReviewItem))
     session.exec(delete(MasterPatient))

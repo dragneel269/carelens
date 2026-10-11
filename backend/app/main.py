@@ -9,7 +9,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 
 from app.api.admin import router as admin_router
+from app.api.audit import router as audit_router
 from app.api.auth import router as auth_router
+from app.api.consents import router as consents_router
 from app.db.session import create_db_and_tables, engine
 from app.domain.models import SourceRecord, User
 from app.integration.pipeline import run_ingest
@@ -53,6 +55,8 @@ app.add_middleware(
 # Mount routes
 app.include_router(auth_router)
 app.include_router(admin_router)
+app.include_router(audit_router)
+app.include_router(consents_router)
 
 
 @app.get("/health")

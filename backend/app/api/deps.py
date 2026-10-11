@@ -1,6 +1,6 @@
 """API authentication and authorization dependencies."""
 
-from typing import Callable
+from typing import Any, Callable
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -56,11 +56,17 @@ def get_current_user(
     return user
 
 
-def require_role(*allowed_roles: str) -> Callable[[User], User]:
+def require_role(*allowed_roles: Any) -> Callable[[User], User]:
     """Dependency enforcing that the authenticated user possesses one of the allowed roles."""
+    flat_roles: set[str] = set()
+    for r in allowed_roles:
+        if isinstance(r, (list, tuple, set)):
+            flat_roles.update(str(item) for item in r)
+        else:
+            flat_roles.add(str(r))
 
     def role_checker(current_user: User = Depends(get_current_user)) -> User:
-        if current_user.role not in allowed_roles:
+        if current_user.role not in flat_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Forbidden: role '{current_user.role}' is not authorized for this resource",

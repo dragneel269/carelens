@@ -10,8 +10,10 @@ from app.core import config
 # Import all domain models so SQLModel metadata registers all tables
 from app.domain.models import (  # noqa: F401
     Allergy,
+    AuditEntry,
     Claim,
     Condition,
+    Consent,
     Encounter,
     IdentityLink,
     IngestReject,

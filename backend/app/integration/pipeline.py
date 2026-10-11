@@ -1,6 +1,5 @@
-"""Ingestion pipeline orchestrator reading feeder datasets and populating canonical entities."""
-
 import json
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict
 
 from sqlmodel import Session, select
@@ -9,8 +8,10 @@ from app.domain.models import (
     Allergy,
     Claim,
     Condition,
+    Consent,
     Encounter,
     IngestReject,
+    MasterPatient,
     Medication,
     Observation,
     SourceRecord,
@@ -252,4 +253,76 @@ def run_ingest(session: Session) -> Dict[str, Any]:
     matching_stats = run_identity_engine(session)
     stats.update(matching_stats)
 
+    # 6. Seed Section 7 default consents for every patient (valid 30 days)
+    consent_count = seed_default_consents(session)
+    stats["consents"] = consent_count
+
     return stats
+
+
+def seed_default_consents(session: Session) -> int:
+    """Seed baseline active consents for all MasterPatients per spec §7.
+
+    Valid 30 days:
+    - clinicians: all clinical categories in doctor/nurse matrix (treatment)
+    - pharmacy: demographics_min, allergies, medications (treatment)
+    - lab: demographics_min, labs (treatment)
+    - billing: demographics_min, claims (payment)
+    """
+    now = datetime.now(timezone.utc)
+    valid_until = now + timedelta(days=30)
+
+    patients = session.exec(select(MasterPatient)).all()
+    count = 0
+
+    consent_templates = [
+        {
+            "group": "clinicians",
+            "categories": (
+                "demographics_min,demographics_full,encounters,"
+                "conditions,allergies,medications,labs,claims"
+            ),
+            "purpose": "treatment",
+        },
+        {
+            "group": "pharmacy",
+            "categories": "demographics_min,allergies,medications",
+            "purpose": "treatment",
+        },
+        {
+            "group": "lab",
+            "categories": "demographics_min,labs",
+            "purpose": "treatment",
+        },
+        {
+            "group": "billing",
+            "categories": "demographics_min,claims",
+            "purpose": "payment",
+        },
+    ]
+
+    for p in patients:
+        for tpl in consent_templates:
+            existing = session.exec(
+                select(Consent).where(
+                    Consent.clid == p.clid,
+                    Consent.group == tpl["group"],
+                    Consent.status == "active",
+                )
+            ).first()
+            if not existing:
+                consent = Consent(
+                    clid=p.clid,
+                    group=tpl["group"],
+                    categories=tpl["categories"],
+                    purpose=tpl["purpose"],
+                    valid_to=valid_until,
+                    status="active",
+                    created_at=now,
+                )
+                session.add(consent)
+                count += 1
+
+    session.commit()
+    return count
+
