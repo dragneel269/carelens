@@ -12,6 +12,7 @@ from app.api.admin import router as admin_router
 from app.api.audit import router as audit_router
 from app.api.auth import router as auth_router
 from app.api.consents import router as consents_router
+from app.api.patients import router as patients_router
 from app.db.session import create_db_and_tables, engine
 from app.domain.models import SourceRecord, User
 from app.integration.pipeline import run_ingest
@@ -57,6 +58,7 @@ app.include_router(auth_router)
 app.include_router(admin_router)
 app.include_router(audit_router)
 app.include_router(consents_router)
+app.include_router(patients_router)
 
 
 @app.get("/health")

@@ -125,9 +125,7 @@ def decide(
             )
             return {"allow": True, "reason": reason, "redact_fields": []}
         else:
-            reason = (
-                f"Denied: Patient '{actor}' cannot access data for patient '{clid}'"
-            )
+            reason = f"Denied: Patient '{actor}' cannot access data for patient '{clid}'"
             audit_log(
                 session=session,
                 actor=actor,
@@ -247,8 +245,7 @@ def decide(
 
     # Denied due to lack of active unexpired consent
     reason = (
-        f"Denied: No active unexpired consent for group '{role_group}' "
-        f"and category '{category}'"
+        f"Denied: No active unexpired consent for group '{role_group}' and category '{category}'"
     )
     audit_log(
         session=session,

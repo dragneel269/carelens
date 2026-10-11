@@ -7,7 +7,7 @@ Hackathon: Tue 13 Oct 2026. Build days: Sun 11 and Mon 12 Oct.
 - [x] P4  Adapters, normalization, ingestion
 - [x] P5  Identity engine
 - [x] P6  Policy, consent, audit
-- [ ] P7  Unified API
+- [x] P7  Unified API
 - [ ] P8  App shell + search
 - [ ] P9  Patient workspace
 - [ ] P10 Patient portal + audit table
@@ -21,10 +21,11 @@ Hackathon: Tue 13 Oct 2026. Build days: Sun 11 and Mon 12 Oct.
 - Adapters, Normalization & Ingestion (P4): Built pure source adapters (`adapt_ehr_bundle`, `adapt_lab_report`, `adapt_pharmacy_dispense`, `adapt_insurer_claim`) producing canonical `SourceRecord`, `Encounter`, `Condition`, `Allergy`, `Medication`, `Observation`, and `Claim` models. Normalized local lab codes to LOINC, unified HbA1c from both labs into % series, converted brands to generics, parsed ISO dates, retaining unmapped codes with `normalized=False`. Created idempotent `run_ingest` with `IngestReject` dead-letter queue, auto-running on startup for empty databases. Added `POST /admin/ingest` and `POST /admin/reset-demo` endpoints for admin role.
 - Identity Engine & Matching (P5): Built Section 4 identity matching pipeline with name normalization (honorific stripping, vowel deduplication, symmetrical token ordering), blocking (phone match or same DOB year + Jellyfish Metaphone phonetic key), and weighted scoring (Name 0.35 via RapidFuzz, DOB 0.25, Phone 0.20, Gender 0.10, Pincode 0.10). Strict thresholds: >= 0.90 auto-link, 0.70-0.89 ReviewItem only, < 0.70 ignore. Same-system IDs always link. Single-key phone constraint enforced. Golden record synthesis (`MasterPatient` with CL-000001 IDs, Hero first) using source priority (EHR > Lab > Pharmacy > Claims) then recency, preserving per-field provenance and alternates. Per-field evidence attached to each `IdentityLink`. Clid propagated to all clinical child records. Linked `ramesh` user account by phone.
 - Policy, Consent & Audit (P6): Built Section 7 zero-trust policy engine in `app/policy/engine.py` with `ROLE_MATRIX`, uncached database consent evaluation, purposeful authorization (billing = payment, others = treatment), default-deny enforcement, and clinical field redaction markers. Implemented append-only cryptographic audit ledger in `app/audit/ledger.py` with `hash = SHA-256(prev_hash + canonical_json)` and full chain integrity verification (`verify_chain`). Seeded 30-day baseline patient consents for clinicians, pharmacy, lab, and billing during ingestion. Mounted `GET /audit` (admin all, patient own), `GET /audit/verify`, `GET/POST /consents`, and `POST /consents/{id}/revoke`.
+- Unified API (P7): Implemented `GET /patients?q=` with multi-attribute search (name, phone, source ID, CLID) returning `linked_systems` and `best_score`. Built `GET /patients/{clid}/unified` across demographics and clinical entities with per-category policy evaluation and field-level restricted markers. Built `GET /patients/{clid}/timeline` with type, source, and date range filters returning chronological entries. Built `GET /patients/{clid}/summary` featuring active problems, reconciled current medications with planted conflict flags (`missing_from_ehr` for Atorva 10, `allergy_conflict` for Mox 500), allergies, latest lab values with 6-point trend arrays (unifying HbA1c across labs into a single `%` series), recent encounters, and claim status. Built `GET /patients/{clid}/identity` returning all linked feeder records with per-field evidence, provenance, and alternate values. Enforced zero-trust access: doctor sees all categories, pharmacist sees only medications and allergies, billing sees only claims, and patient sees only their own linked CLID.
 - Root: Cross-platform npm scripts utilizing concurrently to orchestrate backend and frontend dev, seed, test, lint, and build.
 
 ## Known issues
 None.
 
 ## Next
-P7
+P8

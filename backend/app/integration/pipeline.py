@@ -325,4 +325,3 @@ def seed_default_consents(session: Session) -> int:
 
     session.commit()
     return count
-

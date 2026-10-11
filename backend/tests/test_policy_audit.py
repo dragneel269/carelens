@@ -151,9 +151,7 @@ def test_policy_decide_role_x_category_x_consent(
     final_audit_count = len(db_session.exec(select(AuditEntry)).all())
     assert final_audit_count == initial_audit_count + 1
 
-    last_audit = db_session.exec(
-        select(AuditEntry).order_by(AuditEntry.id.desc()).limit(1)
-    ).first()
+    last_audit = db_session.exec(select(AuditEntry).order_by(AuditEntry.id.desc()).limit(1)).first()
     assert last_audit is not None
     assert last_audit.actor == user.username
     assert last_audit.role == role
@@ -345,9 +343,7 @@ def test_get_audit_endpoints_role_access(db_session: Session):
     assert resp_doctor.status_code == 403
 
     # 4. GET /audit/verify
-    resp_verify = client.get(
-        "/audit/verify", headers={"Authorization": f"Bearer {admin_token}"}
-    )
+    resp_verify = client.get("/audit/verify", headers={"Authorization": f"Bearer {admin_token}"})
     assert resp_verify.status_code == 200
     assert resp_verify.json()["verified"] is True
 

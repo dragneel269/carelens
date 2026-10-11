@@ -272,9 +272,7 @@ def test_hero_patient_four_systems_become_one_master_patient(db_session: Session
     run_ingest(db_session)
 
     # 1. MasterPatient CL-000001 must exist and be Ramesh Kumar
-    hero = db_session.exec(
-        select(MasterPatient).where(MasterPatient.clid == "CL-000001")
-    ).first()
+    hero = db_session.exec(select(MasterPatient).where(MasterPatient.clid == "CL-000001")).first()
     assert hero is not None
     assert "ramesh" in hero.name.lower()
     assert "kumar" in hero.name.lower()
@@ -363,9 +361,7 @@ def test_ambiguous_pairs_are_not_merged_and_appear_as_review_items(db_session: S
 
     # 3. Both pairs must appear in review_items table
     review_items = db_session.exec(select(ReviewItem)).all()
-    review_record_pairs = {
-        (r.record_id_a, r.record_id_b) for r in review_items
-    } | {
+    review_record_pairs = {(r.record_id_a, r.record_id_b) for r in review_items} | {
         (r.record_id_b, r.record_id_a) for r in review_items
     }
 
@@ -381,9 +377,7 @@ def test_user_ramesh_linked_clid_set_by_phone(db_session: Session):
     """User ramesh must have linked_clid set to hero's CLID (CL-000001)."""
     run_ingest(db_session)
 
-    ramesh_user = db_session.exec(
-        select(User).where(User.username == "ramesh")
-    ).first()
+    ramesh_user = db_session.exec(select(User).where(User.username == "ramesh")).first()
     assert ramesh_user is not None
     assert ramesh_user.linked_clid == "CL-000001"
 
@@ -426,9 +420,7 @@ def test_child_clinical_entities_have_propagated_clid(db_session: Session):
     for obs in hero_obs:
         assert obs.clid == "CL-000001"
 
-    hero_claims = db_session.exec(
-        select(Claim).where(Claim.source_record_id == "STAR-48221")
-    ).all()
+    hero_claims = db_session.exec(select(Claim).where(Claim.source_record_id == "STAR-48221")).all()
     assert len(hero_claims) == 2
     for clm in hero_claims:
         assert clm.clid == "CL-000001"

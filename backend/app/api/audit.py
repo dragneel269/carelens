@@ -28,12 +28,7 @@ def get_audit_log(
     - Other roles: 403 Forbidden.
     """
     if current_user.role == "admin":
-        statement = (
-            select(AuditEntry)
-            .order_by(AuditEntry.id.desc())
-            .offset(offset)
-            .limit(limit)
-        )
+        statement = select(AuditEntry).order_by(AuditEntry.id.desc()).offset(offset).limit(limit)
         return list(session.exec(statement).all())
 
     elif current_user.role == "patient":
@@ -41,9 +36,7 @@ def get_audit_log(
         linked_clid = current_user.linked_clid
         statement = (
             select(AuditEntry)
-            .where(
-                (AuditEntry.clid == linked_clid) | (AuditEntry.actor == current_user.username)
-            )
+            .where((AuditEntry.clid == linked_clid) | (AuditEntry.actor == current_user.username))
             .order_by(AuditEntry.id.desc())
             .offset(offset)
             .limit(limit)

@@ -505,10 +505,7 @@ def run_identity_engine(session: Session) -> Dict[str, Any]:
             rec_b = records[j]
 
             # Same-system IDs always link
-            if (
-                rec_a.source == rec_b.source
-                and rec_a.source_record_id == rec_b.source_record_id
-            ):
+            if rec_a.source == rec_b.source and rec_a.source_record_id == rec_b.source_record_id:
                 uf.union(rec_a.id, rec_b.id)
                 continue
 
@@ -648,9 +645,7 @@ def run_identity_engine(session: Session) -> Dict[str, Any]:
     }
 
 
-def _propagate_clid(
-    session: Session, source: str, source_record_id: str, clid: str
-) -> None:
+def _propagate_clid(session: Session, source: str, source_record_id: str, clid: str) -> None:
     """Propagate the resolved CLID to all clinical entities associated with a source record."""
     # Encounters
     encs = session.exec(

@@ -296,5 +296,3 @@ class AuditEntry(SQLModel, table=True):
     reason: str = Field(default="", nullable=False)
     prev_hash: str = Field(nullable=False)
     hash: str = Field(nullable=False)
-
-

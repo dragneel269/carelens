@@ -178,4 +178,3 @@ def revoke_consent(
         "message": f"Consent {consent_id} successfully revoked",
         "consent": consent_dict,
     }
-
