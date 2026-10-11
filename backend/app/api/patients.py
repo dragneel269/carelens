@@ -578,7 +578,32 @@ def get_patient_summary(
             detail=f"Patient with CLID '{clid}' not found",
         )
 
-    summary: Dict[str, Any] = {"clid": clid}
+    min_dec = decide(session, current_user, clid, "demographics_min")
+    full_dec = decide(session, current_user, clid, "demographics_full")
+    if not min_dec["allow"]:
+        patient_obj = make_restricted_marker(min_dec["reason"])
+    else:
+        full_allowed = full_dec["allow"]
+        patient_obj = {
+            "clid": patient.clid,
+            "name": patient.name,
+            "gender": patient.gender,
+            "dob": patient.dob if full_allowed else make_restricted_marker(full_dec["reason"]),
+            "phone": patient.phone if full_allowed else make_restricted_marker(full_dec["reason"]),
+            "pincode": patient.pincode if full_allowed else make_restricted_marker(full_dec["reason"]),
+            "city": patient.city if full_allowed else make_restricted_marker(full_dec["reason"]),
+            "state": patient.state if full_allowed else make_restricted_marker(full_dec["reason"]),
+            "created_at": patient.created_at.isoformat() if patient.created_at else None,
+        }
+
+    links = session.exec(select(IdentityLink).where(IdentityLink.master_clid == clid)).all()
+    linked_systems = sorted(list({lnk.source for lnk in links}))
+
+    summary: Dict[str, Any] = {
+        "clid": clid,
+        "patient": patient_obj,
+        "linked_systems": linked_systems,
+    }
 
     # 1. Active Problems / Conditions
     cond_dec = decide(session, current_user, clid, "conditions")
@@ -623,6 +648,7 @@ def get_patient_summary(
         ]
     else:
         summary["allergies"] = make_restricted_marker(alg_dec["reason"])
+    summary["active_allergies"] = summary["allergies"]
 
     # 3. Merged Current Medications with Conflict Flagging (Spec §8 planted issues)
     med_dec = decide(session, current_user, clid, "medications")

@@ -5,8 +5,11 @@ export type SystemSource = "ehr" | "lab" | "pharmacy" | "claims"
 
 export interface MatchBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   systems?: SystemSource[]
+  linkedSystems?: SystemSource[]
   confidence?: number // e.g. 96 or 0.96
+  confidenceScore?: number
   label?: string
+  size?: 'sm' | 'md' | 'lg'
 }
 
 const sourceDotColors: Record<SystemSource, string> = {
@@ -24,25 +27,37 @@ const sourceLabels: Record<SystemSource, string> = {
 }
 
 export function MatchBadge({
-  systems = ["ehr", "lab", "pharmacy", "claims"],
-  confidence = 96,
+  systems,
+  linkedSystems,
+  confidence,
+  confidenceScore,
   label,
+  size = 'md',
   className,
   ...props
 }: MatchBadgeProps) {
-  const percentage = confidence <= 1 ? Math.round(confidence * 100) : Math.round(confidence)
+  const activeSystems = linkedSystems ?? systems ?? ["ehr", "lab", "pharmacy", "claims"]
+  const rawConfidence = confidenceScore ?? confidence ?? 96
+  const percentage = rawConfidence <= 1 ? Math.round(rawConfidence * 100) : Math.round(rawConfidence)
+
+  const sizeClasses = {
+    sm: "px-2 py-0.5 text-[11px]",
+    md: "px-2.5 py-1 text-xs",
+    lg: "px-3 py-1.5 text-sm",
+  }[size]
 
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-2 rounded-[6px] border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--ink)] shadow-none select-none",
+        "inline-flex items-center gap-2 rounded-[6px] border border-[var(--line)] bg-[var(--surface)] text-[var(--ink)] shadow-none select-none",
+        sizeClasses,
         className
       )}
       {...props}
     >
       {/* Source Dots */}
       <div className="flex items-center gap-1" aria-hidden="true">
-        {systems.map((sys) => (
+        {activeSystems.map((sys) => (
           <span
             key={sys}
             title={sourceLabels[sys]}
@@ -53,7 +68,7 @@ export function MatchBadge({
 
       {/* Badge Text */}
       <span className="font-sans font-medium text-[var(--ink)]">
-        {label ?? `${systems.length} systems linked`}
+        {label ?? `${activeSystems.length} systems linked`}
       </span>
 
       <span className="text-[var(--line)]">·</span>

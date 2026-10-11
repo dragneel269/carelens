@@ -54,14 +54,13 @@ app.add_middleware(
 )
 
 # Mount routes
-app.include_router(auth_router)
-app.include_router(admin_router)
-app.include_router(audit_router)
-app.include_router(consents_router)
-app.include_router(patients_router)
+for r in [auth_router, admin_router, audit_router, consents_router, patients_router]:
+    app.include_router(r)
+    app.include_router(r, prefix="/api")
 
 
 @app.get("/health")
+@app.get("/api/health")
 def health_check() -> Dict[str, Any]:
     """Return health status of the backend service."""
     return {
