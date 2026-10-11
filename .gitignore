@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.venv/
+backend/.venv/
+
+# Build artifacts
+dist/
+build/
+web/dist/
+*.egg-info/
+__pycache__/
+*.py[cod]
+
+# Testing and linting caches
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local configuration and environment variables
+.env
+*.env.local
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor and OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

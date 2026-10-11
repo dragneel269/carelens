@@ -1,0 +1,172 @@
+@import "@fontsource/instrument-sans/400.css";
+@import "@fontsource/instrument-sans/500.css";
+@import "@fontsource/instrument-sans/600.css";
+@import "@fontsource/newsreader/400.css";
+@import "@fontsource/newsreader/600.css";
+@import "@fontsource/newsreader/400-italic.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+
+  --color-teal: var(--teal);
+  --color-vermilion: var(--vermilion);
+  --color-ok: var(--ok);
+
+  --color-source-ehr: var(--source-ehr);
+  --color-source-lab: var(--source-lab);
+  --color-source-pharmacy: var(--source-pharmacy);
+  --color-source-claims: var(--source-claims);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+}
+
+:root {
+  --paper: #F6F3EE;
+  --surface: #FCFBF8;
+  --line: #DDD6CA;
+  --ink: #13222E;
+  --ink-soft: #4B5A67;
+
+  --teal: #0E5E63;
+  --vermilion: #C2412D;
+  --ok: #2E7D5B;
+
+  --source-ehr: #2B6CB0;
+  --source-lab: #4F7F3A;
+  --source-pharmacy: #C07A1F;
+  --source-claims: #8C5B45;
+
+  --background: #F6F3EE;
+  --foreground: #13222E;
+  --card: #FCFBF8;
+  --card-foreground: #13222E;
+  --popover: #FCFBF8;
+  --popover-foreground: #13222E;
+  --primary: #0E5E63;
+  --primary-foreground: #FCFBF8;
+  --secondary: #FCFBF8;
+  --secondary-foreground: #13222E;
+  --muted: #EBE6DC;
+  --muted-foreground: #4B5A67;
+  --accent: #EBE6DC;
+  --accent-foreground: #13222E;
+  --destructive: #C2412D;
+  --destructive-foreground: #FCFBF8;
+  --border: #DDD6CA;
+  --input: #DDD6CA;
+  --ring: #0E5E63;
+}
+
+.dark {
+  --paper: #0E151B;
+  --surface: #141D25;
+  --line: #25323D;
+  --ink: #E9E4DA;
+  --ink-soft: #A8B3BC;
+
+  --teal: #4FB3B0;
+  --vermilion: #F07A66;
+  --ok: #5DBB8F;
+
+  --source-ehr: #6EA8E6;
+  --source-lab: #8DBB6E;
+  --source-pharmacy: #E3A24A;
+  --source-claims: #C99278;
+
+  --background: #0E151B;
+  --foreground: #E9E4DA;
+  --card: #141D25;
+  --card-foreground: #E9E4DA;
+  --popover: #141D25;
+  --popover-foreground: #E9E4DA;
+  --primary: #4FB3B0;
+  --primary-foreground: #0E151B;
+  --secondary: #141D25;
+  --secondary-foreground: #E9E4DA;
+  --muted: #1B2631;
+  --muted-foreground: #A8B3BC;
+  --accent: #1B2631;
+  --accent-foreground: #E9E4DA;
+  --destructive: #F07A66;
+  --destructive-foreground: #0E151B;
+  --border: #25323D;
+  --input: #25323D;
+  --ring: #4FB3B0;
+}
+
+* {
+  border-color: var(--border);
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular mono numbers for medical numbers and codes */
+.font-mono-tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Redacted diagonal hatching signature element */
+.redacted-hatch {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--line),
+    var(--line) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "carelens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CareLens: Unified clinical view across EHR, lab, pharmacy, and insurer systems",
+  "scripts": {
+    "dev": "concurrently -k -s first -n \"backend,web\" -c \"teal,cyan\" \"uv run --directory backend uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload\" \"npm --prefix web run dev\"",
+    "seed": "uv run --directory backend python -m app.seed",
+    "test": "concurrently -s all --kill-others-on-fail -n \"backend,web\" -c \"magenta,blue\" \"uv run --directory backend pytest\" \"npm --prefix web run test\"",
+    "lint": "concurrently -s all --kill-others-on-fail -n \"backend,web\" -c \"yellow,green\" \"uv run --directory backend ruff check .\" \"npm --prefix web run lint\"",
+    "build": "npm --prefix web run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
