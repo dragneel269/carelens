@@ -6,8 +6,18 @@ from sqlmodel import Session, SQLModel, create_engine
 
 from app.core import config
 
-# Import models so SQLModel metadata registers all tables
-from app.domain.models import User  # noqa: F401
+# Import all domain models so SQLModel metadata registers all tables
+from app.domain.models import (  # noqa: F401
+    Allergy,
+    Claim,
+    Condition,
+    Encounter,
+    IngestReject,
+    Medication,
+    Observation,
+    SourceRecord,
+    User,
+)
 
 # SQLite configuration
 engine = create_engine(

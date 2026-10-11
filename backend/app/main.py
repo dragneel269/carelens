@@ -6,16 +6,32 @@ from typing import Any, AsyncGenerator, Dict
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlmodel import Session, select
 
+from app.api.admin import router as admin_router
 from app.api.auth import router as auth_router
-from app.db.session import create_db_and_tables
+from app.db.session import create_db_and_tables, engine
+from app.domain.models import SourceRecord, User
+from app.integration.pipeline import run_ingest
+from app.seed import seed_users
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """Execute startup and shutdown tasks."""
+    """Execute startup and shutdown tasks, auto-seeding if database is fresh."""
     # Ensure database tables exist
     create_db_and_tables()
+
+    # Auto-run seed and ingestion if DB is empty
+    with Session(engine) as session:
+        has_users = session.exec(select(User)).first() is not None
+        if not has_users:
+            seed_users(session)
+
+        has_source_records = session.exec(select(SourceRecord)).first() is not None
+        if not has_source_records:
+            run_ingest(session)
+
     yield
 
 
@@ -34,8 +50,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount authentication routes
+# Mount routes
 app.include_router(auth_router)
+app.include_router(admin_router)
 
 
 @app.get("/health")
