@@ -2,7 +2,7 @@
 Hackathon: Tue 13 Oct 2026. Build days: Sun 11 and Mon 12 Oct.
 
 - [x] P1  Scaffold
-- [ ] P2  Design system
+- [x] P2  Design system
 - [ ] P3  Backend base + seed data
 - [ ] P4  Adapters, normalization, ingestion
 - [ ] P5  Identity engine
@@ -16,10 +16,11 @@ Hackathon: Tue 13 Oct 2026. Build days: Sun 11 and Mon 12 Oct.
 ## Decisions
 - Backend: uv-managed Python 3.12 non-package app layout with FastAPI, SQLModel, Uvicorn, and app/{api,core,db,domain,integration,policy,audit,seed} structure.
 - Web: Vite + React 19 + TypeScript strict + Tailwind CSS v4, Fontsource fonts (Newsreader, Instrument Sans, IBM Plex Mono), shadcn/ui foundation, and TanStack Query.
+- Design System (P2): Strict "Clinical Editorial" paper chart aesthetics. Self-hosted fonts; tokens mapped into Tailwind v4 `@theme`; rethemed Button, Card, Badge, Input, Tabs, Sheet (380px drawer), Tooltip, Table, Popover; built signature clinical components (`Redacted`, `MatchBadge`, `SourceBadge`, `ProvChip`, `HashChip`, `EmptyState`, `SkeletonCard`); `/design` specimen verified in Light and Dark themes.
 - Root: Cross-platform npm scripts utilizing concurrently to orchestrate backend and frontend dev, seed, test, lint, and build.
 
 ## Known issues
 None.
 
 ## Next
-P2
+P3

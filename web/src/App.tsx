@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
   Activity,
@@ -6,6 +7,7 @@ import {
   CheckCircle2,
   Database,
   Moon,
+  Palette,
   RefreshCw,
   Server,
   ShieldAlert,
@@ -13,18 +15,12 @@ import {
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { fetchHealth } from './api/health'
+import DesignSystemPage from './pages/DesignSystemPage'
+import { MatchBadge } from './components/clinical/MatchBadge'
+import { Redacted } from './components/clinical/Redacted'
+import { HashChip } from './components/clinical/HashChip'
 
-export default function App() {
-  const [isDark, setIsDark] = useState(false)
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-  }, [isDark])
-
+function DashboardView({ isDark, setIsDark }: { isDark: boolean; setIsDark: React.Dispatch<React.SetStateAction<boolean>> }) {
   const {
     data: health,
     isLoading,
@@ -60,6 +56,16 @@ export default function App() {
 
             <div className="h-3.5 w-px bg-[var(--line)]" />
 
+            <Link
+              to="/design"
+              className="flex items-center gap-1.5 rounded-[4px] border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1 font-mono text-[11px] text-[var(--teal)] hover:border-[var(--teal)] hover:bg-[var(--paper)] transition-colors"
+            >
+              <Palette className="h-3 w-3" />
+              <span>Design System (/design)</span>
+            </Link>
+
+            <div className="h-3.5 w-px bg-[var(--line)]" />
+
             <div className="font-mono text-[12px] text-[var(--ink-soft)]">
               dr.rao <span className="text-[var(--teal)] font-medium">· Doctor</span>
             </div>
@@ -67,7 +73,7 @@ export default function App() {
             <button
               onClick={() => setIsDark((prev) => !prev)}
               aria-label="Toggle dark mode"
-              className="flex h-7 w-7 items-center justify-center rounded-[6px] border border-[var(--line)] bg-[var(--surface)] text-[var(--ink-soft)] hover:text-[var(--ink)] focus:outline-none focus:ring-1 focus:ring-[var(--teal)]"
+              className="flex h-7 w-7 items-center justify-center rounded-[6px] border border-[var(--line)] bg-[var(--surface)] text-[var(--ink-soft)] hover:text-[var(--ink)] focus:outline-none focus:ring-1 focus:ring-[var(--teal)] cursor-pointer"
             >
               {isDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
             </button>
@@ -104,7 +110,7 @@ export default function App() {
                 onClick={() => refetch()}
                 disabled={isFetching}
                 aria-label="Refresh backend status"
-                className="flex items-center gap-1.5 rounded-[6px] border border-[var(--line)] bg-[var(--paper)] px-2.5 py-1 text-xs font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] hover:border-[var(--teal)] transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 rounded-[6px] border border-[var(--line)] bg-[var(--paper)] px-2.5 py-1 text-xs font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] hover:border-[var(--teal)] transition-colors disabled:opacity-50 cursor-pointer"
               >
                 <RefreshCw className={`h-3 w-3 ${isFetching ? 'animate-spin' : ''}`} />
                 <span>Refresh</span>
@@ -143,7 +149,7 @@ export default function App() {
                       </div>
                       <button
                         onClick={() => refetch()}
-                        className="mt-3 rounded-[4px] border border-[var(--vermilion)] px-2.5 py-1 text-xs font-medium text-[var(--vermilion)] hover:bg-[var(--vermilion)] hover:text-white transition-colors"
+                        className="mt-3 rounded-[4px] border border-[var(--vermilion)] px-2.5 py-1 text-xs font-medium text-[var(--vermilion)] hover:bg-[var(--vermilion)] hover:text-white transition-colors cursor-pointer"
                       >
                         Retry Connection
                       </button>
@@ -264,54 +270,39 @@ export default function App() {
             <h2 id="spec-preview-heading" className="text-sm font-semibold tracking-wide uppercase text-[var(--ink)]">
               Core Design Signatures (Docs/Design-System.md)
             </h2>
-            <span className="font-mono text-xs text-[var(--ink-soft)]">Spec §4 & §7 Ready</span>
+            <Link to="/design" className="font-mono text-xs text-[var(--teal)] hover:underline">
+              Inspect Full Design Specimen →
+            </Link>
           </div>
 
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             {/* Signature 1: MatchBadge */}
             <div className="rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-3.5">
-              <div className="text-[11px] font-medium text-[var(--ink-soft)]">
+              <div className="text-[11px] font-medium text-[var(--ink-soft)] mb-2">
                 Signature 1 · MatchBadge
               </div>
-              <div className="mt-2.5 inline-flex items-center gap-2 rounded-[4px] border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1 text-xs">
-                <div className="flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--source-ehr)]" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--source-lab)]" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--source-pharmacy)]" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--source-claims)]" />
-                </div>
-                <span className="font-medium text-[var(--ink)]">4 systems linked</span>
-                <span className="font-mono font-semibold text-[var(--teal)]">96%</span>
-              </div>
+              <MatchBadge systems={['ehr', 'lab', 'pharmacy', 'claims']} confidence={96} />
             </div>
 
             {/* Signature 2: Redacted Field */}
             <div className="rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-3.5">
-              <div className="text-[11px] font-medium text-[var(--ink-soft)]">
+              <div className="text-[11px] font-medium text-[var(--ink-soft)] mb-2">
                 Signature 2 · Redacted Hatching
               </div>
-              <div className="mt-2.5 flex items-center gap-2 text-xs">
-                <span className="text-[var(--ink-soft)]">Claim Amount:</span>
-                <span
-                  title="Hidden for Billing - consent required"
-                  className="redacted-hatch inline-block h-5 w-24 rounded-[3px] border border-[var(--line)] align-middle cursor-help"
-                />
-              </div>
-              <div className="mt-1 text-[11px] text-[var(--ink-soft)] italic">
-                Tooltip: Hidden for Billing · consent required
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-[var(--ink-soft)]">Claim:</span>
+                <Redacted reason="Hidden for Billing - consent required" width="w-24" />
               </div>
             </div>
 
             {/* Signature 3: Audit Ledger Hash Chip */}
             <div className="rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-3.5">
-              <div className="text-[11px] font-medium text-[var(--ink-soft)]">
+              <div className="text-[11px] font-medium text-[var(--ink-soft)] mb-2">
                 Signature 3 · Tamper Ledger
               </div>
-              <div className="mt-2.5 flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-2 text-xs">
                 <ShieldAlert className="h-3.5 w-3.5 text-[var(--teal)]" />
-                <span className="font-mono text-[11px] bg-[var(--surface)] px-1.5 py-0.5 rounded border border-[var(--line)] text-[var(--ink)]">
-                  #7f9a2e01
-                </span>
+                <HashChip hash="7f9a2e01ca88b491" />
                 <span className="text-[11px] text-[var(--ok)] font-medium">Chain verified</span>
               </div>
             </div>
@@ -319,5 +310,26 @@ export default function App() {
         </section>
       </main>
     </div>
+  )
+}
+
+export default function App() {
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [isDark])
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<DashboardView isDark={isDark} setIsDark={setIsDark} />} />
+        <Route path="/design" element={<DesignSystemPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }

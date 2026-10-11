@@ -152,14 +152,47 @@ html, body {
 }
 
 /* Redacted diagonal hatching signature element */
-.redacted-hatch {
-  background: repeating-linear-gradient(
+.redacted-bar {
+  display: inline-block;
+  vertical-align: middle;
+  background-color: var(--line);
+  background-image: repeating-linear-gradient(
     -45deg,
-    var(--line),
-    var(--line) 3px,
-    transparent 3px,
+    var(--ink-soft) 0,
+    var(--ink-soft) 2px,
+    transparent 2px,
     transparent 6px
   );
+  border-radius: 3px;
+  min-height: 1.1em;
+  position: relative;
+  overflow: hidden;
+}
+
+.redacted-bar-ink {
+  background-color: var(--ink);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--line) 0,
+    var(--line) 1.5px,
+    transparent 1.5px,
+    transparent 5px
+  );
+}
+
+/* Hairline clinical borders */
+.border-hairline {
+  border-width: 1px;
+  border-color: var(--line);
+}
+
+/* Focus ring per design spec: visible focus ring in teal */
+.focus-clinical {
+  outline: none;
+}
+.focus-clinical:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
