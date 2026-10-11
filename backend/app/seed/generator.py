@@ -614,7 +614,7 @@ def generate_all_datasets() -> Dict[str, Any]:
         "gender": "male",
         "city": "Ahmedabad",
         "pincode": "380001",
-        "phone": "90000 33002",
+        "phone": "90000 33001",
     }
 
     # Ambiguous Pair 2: "Priya Sharma" - same name, same DOB year, DIFFERENT PINCODE & PHONE

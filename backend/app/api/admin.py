@@ -12,9 +12,12 @@ from app.domain.models import (
     Claim,
     Condition,
     Encounter,
+    IdentityLink,
     IngestReject,
+    MasterPatient,
     Medication,
     Observation,
+    ReviewItem,
     SourceRecord,
 )
 from app.integration.pipeline import run_ingest
@@ -45,7 +48,10 @@ def trigger_ingest(session: Session = Depends(get_session)) -> Dict[str, Any]:
 )
 def reset_demo(session: Session = Depends(get_session)) -> Dict[str, Any]:
     """Admin-only endpoint to reset the demo environment to fresh seed state."""
-    # Wipe clinical data tables
+    # Wipe clinical data and identity linkage tables
+    session.exec(delete(IdentityLink))
+    session.exec(delete(ReviewItem))
+    session.exec(delete(MasterPatient))
     session.exec(delete(Claim))
     session.exec(delete(Observation))
     session.exec(delete(Medication))

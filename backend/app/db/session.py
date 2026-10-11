@@ -2,6 +2,7 @@
 
 from typing import Generator
 
+from sqlalchemy import text
 from sqlmodel import Session, SQLModel, create_engine
 
 from app.core import config
@@ -12,9 +13,12 @@ from app.domain.models import (  # noqa: F401
     Claim,
     Condition,
     Encounter,
+    IdentityLink,
     IngestReject,
+    MasterPatient,
     Medication,
     Observation,
+    ReviewItem,
     SourceRecord,
     User,
 )
@@ -30,6 +34,16 @@ engine = create_engine(
 def create_db_and_tables() -> None:
     """Initialize database tables registered in SQLModel metadata."""
     SQLModel.metadata.create_all(engine)
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE users ADD COLUMN linked_clid VARCHAR"))
+            conn.commit()
+        except Exception:
+            pass
+
+
+# Ensure schema is initialized on engine load
+create_db_and_tables()
 
 
 def get_session() -> Generator[Session, None, None]:

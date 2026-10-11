@@ -21,6 +21,7 @@ from app.integration.adapters import (
     adapt_lab_report,
     adapt_pharmacy_dispense,
 )
+from app.integration.matching import run_identity_engine
 from app.seed.generator import DATA_DIR, generate_all_datasets
 
 
@@ -246,4 +247,9 @@ def run_ingest(session: Session) -> Dict[str, Any]:
                 stats["rejects"] += 1
 
     session.commit()
+
+    # 5. Execute cross-system record linkage and golden patient synthesis
+    matching_stats = run_identity_engine(session)
+    stats.update(matching_stats)
+
     return stats

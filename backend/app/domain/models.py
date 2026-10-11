@@ -29,6 +29,7 @@ class User(SQLModel, table=True):
     hashed_password: str = Field(nullable=False)
     role: str = Field(index=True, nullable=False)
     full_name: str = Field(default="", nullable=False)
+    linked_clid: Optional[str] = Field(default=None, index=True)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         nullable=False,
@@ -192,3 +193,67 @@ class IngestReject(SQLModel, table=True):
         default_factory=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
+
+
+class MasterPatient(SQLModel, table=True):
+    """Golden master patient record with synthesized canonical demographics."""
+
+    __tablename__ = "master_patients"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    clid: str = Field(unique=True, index=True, nullable=False)  # "CL-000001" style
+    name: str = Field(nullable=False)
+    dob: Optional[str] = Field(default=None)
+    gender: Optional[str] = Field(default=None)
+    phone: Optional[str] = Field(default=None, index=True)
+    pincode: Optional[str] = Field(default=None)
+    city: Optional[str] = Field(default=None)
+    state: Optional[str] = Field(default=None)
+    provenance_json: str = Field(default="{}", nullable=False)
+    alternates_json: str = Field(default="{}", nullable=False)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+
+class IdentityLink(SQLModel, table=True):
+    """Record linkage relationship between a source record and a master patient."""
+
+    __tablename__ = "identity_links"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    master_clid: str = Field(index=True, nullable=False)
+    source: str = Field(index=True, nullable=False)
+    source_record_id: str = Field(index=True, nullable=False)
+    confidence_score: float = Field(nullable=False)
+    evidence_json: str = Field(default="{}", nullable=False)
+    status: str = Field(default="auto_linked", nullable=False)  # "auto_linked", "manual_approved"
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+
+class ReviewItem(SQLModel, table=True):
+    """Candidate link pair requiring manual steward review (score 0.70 - 0.89)."""
+
+    __tablename__ = "review_items"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    source_a: str = Field(nullable=False)
+    record_id_a: str = Field(nullable=False)
+    source_b: str = Field(nullable=False)
+    record_id_b: str = Field(nullable=False)
+    score: float = Field(nullable=False)
+    evidence_json: str = Field(default="{}", nullable=False)
+    status: str = Field(default="pending", nullable=False)  # "pending", "approved", "rejected"
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
