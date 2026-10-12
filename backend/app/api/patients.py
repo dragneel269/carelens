@@ -590,7 +590,9 @@ def get_patient_summary(
             "gender": patient.gender,
             "dob": patient.dob if full_allowed else make_restricted_marker(full_dec["reason"]),
             "phone": patient.phone if full_allowed else make_restricted_marker(full_dec["reason"]),
-            "pincode": patient.pincode if full_allowed else make_restricted_marker(full_dec["reason"]),
+            "pincode": (
+                patient.pincode if full_allowed else make_restricted_marker(full_dec["reason"])
+            ),
             "city": patient.city if full_allowed else make_restricted_marker(full_dec["reason"]),
             "state": patient.state if full_allowed else make_restricted_marker(full_dec["reason"]),
             "created_at": patient.created_at.isoformat() if patient.created_at else None,

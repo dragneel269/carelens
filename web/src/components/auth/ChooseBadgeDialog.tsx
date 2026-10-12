@@ -118,6 +118,8 @@ export function ChooseBadgeDialog({ open, onClose }: ChooseBadgeDialogProps) {
             return (
               <button
                 key={badge.username}
+                data-testid={`badge-${badge.username}`}
+                aria-label={`Select badge for ${badge.full_name} (${badge.role})`}
                 onClick={() => handleSelectBadge(badge)}
                 disabled={isSwitching}
                 className={`group relative flex flex-col items-start rounded-[8px] border p-3.5 text-left transition-all cursor-pointer ${

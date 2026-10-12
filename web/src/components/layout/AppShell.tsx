@@ -4,6 +4,7 @@ import { PatientSidebar } from './PatientSidebar'
 import { RightDrawer } from './RightDrawer'
 import { CommandPalette } from '../command/CommandPalette'
 import { ChooseBadgeDialog } from '../auth/ChooseBadgeDialog'
+import { useAuthStore } from '../../lib/auth'
 
 interface AppShellProps {
   children: ReactNode
@@ -22,8 +23,9 @@ export function AppShell({ children, showSidebar = true }: AppShellProps) {
     return false
   })
 
+  const token = useAuthStore((s) => s.token)
   const [isCommandOpen, setIsCommandOpen] = useState(false)
-  const [isBadgeDialogOpen, setIsBadgeDialogOpen] = useState(false)
+  const [isBadgeDialogOpen, setIsBadgeDialogOpen] = useState(!token)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   // Sync dark class on document

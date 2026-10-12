@@ -5,16 +5,19 @@ import {
   ArrowRight,
   Database,
   CheckCircle2,
+  AlertCircle,
+  UserX,
 } from 'lucide-react'
 import { usePatientsSearch } from '../api/client'
 import { useAuthStore } from '../lib/auth'
 import { MatchBadge } from '../components/clinical/MatchBadge'
 import { SkeletonCard } from '../components/clinical/SkeletonCard'
+import { EmptyState } from '../components/clinical/EmptyState'
 
 export function HomePage() {
   const navigate = useNavigate()
   const currentUser = useAuthStore((s) => s.currentUser)
-  const { data: patients = [], isLoading } = usePatientsSearch('')
+  const { data: patients = [], isLoading, isError, error, refetch } = usePatientsSearch('')
 
   const heroPatient = patients.find((p) => p.clid === 'CL-000001') || patients[0]
 
@@ -52,6 +55,23 @@ export function HomePage() {
       {/* Featured Hero Patient */}
       {isLoading ? (
         <SkeletonCard lines={3} />
+      ) : isError ? (
+        <div className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-6">
+          <EmptyState
+            title="Failed to load patient records"
+            description={error?.message || 'Check your network connection or session.'}
+            action={{ label: 'Retry', onClick: () => refetch() }}
+            icon={AlertCircle}
+          />
+        </div>
+      ) : patients.length === 0 ? (
+        <div className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-6">
+          <EmptyState
+            title="No patients found"
+            description="No patient records have been linked yet or directory is empty."
+            icon={UserX}
+          />
+        </div>
       ) : heroPatient ? (
         <section aria-labelledby="hero-patient-heading" className="space-y-3">
           <div className="flex items-center justify-between">

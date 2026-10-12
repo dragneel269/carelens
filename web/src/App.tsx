@@ -1,7 +1,5 @@
-import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
-import { useAuthStore } from './lib/auth'
 import { AppShell } from './components/layout/AppShell'
 import { HomePage } from './pages/HomePage'
 import { PatientDetailPage } from './pages/PatientDetailPage'
@@ -10,16 +8,6 @@ import { AuditPage } from './pages/AuditPage'
 import DesignSystemPage from './pages/DesignSystemPage'
 
 export default function App() {
-  const token = useAuthStore((s) => s.token)
-  const currentUser = useAuthStore((s) => s.currentUser)
-  const login = useAuthStore((s) => s.login)
-
-  // On first load, authenticate default user if not already authenticated
-  useEffect(() => {
-    if (!token && currentUser) {
-      login(currentUser.username)
-    }
-  }, [token, currentUser, login])
 
   return (
     <BrowserRouter>
