@@ -359,13 +359,21 @@ export function useAuditEntries(limit: number = 50) {
   })
 }
 
+export interface AuditVerifyResult {
+  verified: boolean
+  valid?: boolean
+  count: number
+  total_entries?: number
+  broken_at_id?: number | null
+  message: string
+}
+
 export function useAuditVerify() {
   const token = useAuthStore((s) => s.token)
 
-  return useQuery<{ valid: boolean; total_entries: number; latest_hash: string; message: string }>({
+  return useQuery<AuditVerifyResult>({
     queryKey: ['audit-verify', token],
-    queryFn: () =>
-      apiRequest<{ valid: boolean; total_entries: number; latest_hash: string; message: string }>('/api/audit/verify'),
+    queryFn: () => apiRequest<AuditVerifyResult>('/api/audit/verify'),
     staleTime: 10000,
   })
 }
