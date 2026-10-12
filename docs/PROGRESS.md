@@ -11,7 +11,7 @@ Hackathon: Tue 13 Oct 2026. Build days: Sun 11 and Mon 12 Oct.
 - [x] P8  App shell + search
 - [x] P9  Patient workspace
 - [x] P10 Patient portal + audit table
-- [ ] P11 Polish + demo reset
+- [x] P11 Polish + demo reset
 
 ## Decisions
 - Backend: uv-managed Python 3.12 non-package app layout with FastAPI, SQLModel, Uvicorn, and app/{api,core,db,domain,integration,policy,audit,seed} structure.
@@ -25,10 +25,11 @@ Hackathon: Tue 13 Oct 2026. Build days: Sun 11 and Mon 12 Oct.
 - App Shell & Search (P8): Completed 'Choose your badge' modal supporting all 7 user roles, calling POST /api/auth/login with 'carelens-demo' and persisting tokens in memory and sessionStorage. Implemented 3-pane layout (280px patient sidebar, flexible central canvas, 380px inspector drawer). Top bar includes 'Viewing as' role switcher (re-authenticates and refetches queries), theme toggle (light/dark paper tokens), and Cmd/Ctrl+K palette. Wired live search with MatchBadge hits (verified 'Ramesh' shows '4 systems linked - 100%'). Routes /, /patient/:id, /portal, /audit provide loading, empty, and error states. Verified via browser agent across roles and passing tests/lint.
 - Patient Workspace (P9): Patient banner with name in serif 28px, master CLID and linked feeder source IDs in mono (APL-004512, LB-77120, TX-9981, PH-30991, STAR-48221), 'Consent: Treatment Active' pill, and hero 'Viewing as' role switcher. Overview tab: cards for Active Problems (with ProvChips), Reconciled Current Medications with conflict flags (Atorva missing from EHR, Mox 500 allergy conflict) and ProvChips, Documented Allergies (with ProvChips), Latest Labs with Recharts trend lines, normal reference bands (e.g. HbA1c 4.0-5.6%, glucose 70-99 mg/dL), LOINC codes, and ProvChips, and Insurance Claims with ProvChips. Timeline tab: filtered chronological list by date with SourceBadges, ProvChips, and type/source filter chips. Identity tab: linked feeder source records with plain-language 'Why linked' explanation lines and confidence scores in mono tabular format. Role switching replays a 220 ms sweep across `Redacted` bars; verified doctor, pharmacist, and billing views differ correctly via browser agent and unit tests.
 - Patient Portal & Audit Table (P10): Built patient `/portal` with departmental consent directives by group (`clinicians`, `pharmacy`, `lab`, `billing`) with per-category toggle pills and quick 'Revoke All Consents' button. Built real-time access history table in calmer, larger, plainer styling displaying provider, role, declared purpose, timestamp, outcome, and prominently highlighting policy denials with alert vermilion indicator rows and denial counter filters. Built admin `/audit` ledger table with mono figures, HashChips for previous and current block hashes, and prominent 'Verify Chain' validation button confirming contiguous integrity against the genesis hash. Verified live e2e flow: revoking billing consent immediately redacts claims in billing's view, logs an append-only denial, renders the denial in patient access history, and validates cryptographic chain integrity.
+- Polish + Demo Reset (P11): Built hidden `/demo` page (accessible via `Cmd+Shift+D` / `Ctrl+Shift+D` shortcut, elevated to admin) and interactive floating `ScriptOverlay` HUD adhering to `docs/demo-script.md` timestamps (0:00 through 4:40) with presenter talking points, stepper, and execution console. Connected Reset Demo Data button to `POST /api/admin/reset-demo` which wipes and deterministically reseeds all tables (seed=42) and baseline consents so hero patient CL-000001 (Ramesh Kumar) is identical after every reset. Added Pre-Warm Hero query prefetching across EHR, Lab, Pharmacy, and Claims. Implemented automated 3-consecutive-run sequence executing all 8 demo script steps across 3 complete cycles with zero page refresh. Inspected all routes in light and dark modes at 1366x768 against the anti-template design checklist. Full test suite passing (289 backend + 20 frontend) and lint clean.
 - Root: Cross-platform npm scripts utilizing concurrently to orchestrate backend and frontend dev, seed, test, lint, and build.
 
 ## Known issues
 None.
 
 ## Next
-P11
+Done. Ready for Hackathon presentation.

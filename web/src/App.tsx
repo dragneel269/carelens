@@ -1,16 +1,43 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { AppShell } from './components/layout/AppShell'
 import { HomePage } from './pages/HomePage'
 import { PatientDetailPage } from './pages/PatientDetailPage'
 import { PortalPage } from './pages/PortalPage'
 import { AuditPage } from './pages/AuditPage'
+import { DemoPage } from './pages/DemoPage'
+import { ScriptOverlay } from './components/demo/ScriptOverlay'
 import DesignSystemPage from './pages/DesignSystemPage'
+import { useAuthStore } from './lib/auth'
+
+function DemoShortcutListener() {
+  const navigate = useNavigate()
+  const login = useAuthStore((s) => s.login)
+  const currentUser = useAuthStore((s) => s.currentUser)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'd') {
+        e.preventDefault()
+        if (currentUser?.role !== 'admin') {
+          login('admin.neha')
+        }
+        navigate('/demo')
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [navigate, login, currentUser])
+
+  return null
+}
 
 export default function App() {
-
   return (
     <BrowserRouter>
+      <DemoShortcutListener />
+      <ScriptOverlay />
       {/* Toast notifications */}
       <Toaster
         position="bottom-right"
@@ -57,6 +84,16 @@ export default function App() {
           element={
             <AppShell showSidebar={false}>
               <AuditPage />
+            </AppShell>
+          }
+        />
+
+        {/* Hidden Demo Command Center */}
+        <Route
+          path="/demo"
+          element={
+            <AppShell showSidebar={false}>
+              <DemoPage />
             </AppShell>
           }
         />

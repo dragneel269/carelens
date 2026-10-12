@@ -260,8 +260,8 @@ export async function apiRequest<T>(url: string, options: RequestInit = {}): Pro
       // Use fallback errorDetail
     }
 
-    // Notify user with sonner toast on non-404 unexpected errors
-    if (response.status !== 404) {
+    // Notify user with sonner toast on non-404 and non-403 unexpected errors (403 is in-band clinical policy denial)
+    if (response.status !== 404 && response.status !== 403) {
       toast.error(errorDetail, {
         description: `${options.method || 'GET'} ${url}`,
       })
@@ -355,6 +355,7 @@ export function useAuditEntries(limit: number = 50) {
   return useQuery<AuditEntryItem[]>({
     queryKey: ['audit-entries', limit, role, token],
     queryFn: () => apiRequest<AuditEntryItem[]>(`/api/audit?limit=${limit}`),
+    enabled: !!token && (role === 'admin' || role === 'patient'),
     staleTime: 3000,
   })
 }
@@ -370,10 +371,12 @@ export interface AuditVerifyResult {
 
 export function useAuditVerify() {
   const token = useAuthStore((s) => s.token)
+  const role = useAuthStore((s) => s.currentUser?.role)
 
   return useQuery<AuditVerifyResult>({
-    queryKey: ['audit-verify', token],
+    queryKey: ['audit-verify', role, token],
     queryFn: () => apiRequest<AuditVerifyResult>('/api/audit/verify'),
+    enabled: !!token && role === 'admin',
     staleTime: 10000,
   })
 }
@@ -385,6 +388,7 @@ export function useConsents() {
   return useQuery<ConsentItem[]>({
     queryKey: ['consents', role, token],
     queryFn: () => apiRequest<ConsentItem[]>('/api/consents'),
+    enabled: !!token && (role === 'patient' || role === 'admin'),
     staleTime: 5000,
   })
 }
