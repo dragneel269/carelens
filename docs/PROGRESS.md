@@ -9,7 +9,7 @@ Hackathon: Tue 13 Oct 2026. Build days: Sun 11 and Mon 12 Oct.
 - [x] P6  Policy, consent, audit
 - [x] P7  Unified API
 - [x] P8  App shell + search
-- [ ] P9  Patient workspace
+- [x] P9  Patient workspace
 - [ ] P10 Patient portal + audit table
 - [ ] P11 Polish + demo reset
 
@@ -23,10 +23,11 @@ Hackathon: Tue 13 Oct 2026. Build days: Sun 11 and Mon 12 Oct.
 - Policy, Consent & Audit (P6): Built Section 7 zero-trust policy engine in `app/policy/engine.py` with `ROLE_MATRIX`, uncached database consent evaluation, purposeful authorization (billing = payment, others = treatment), default-deny enforcement, and clinical field redaction markers. Implemented append-only cryptographic audit ledger in `app/audit/ledger.py` with `hash = SHA-256(prev_hash + canonical_json)` and full chain integrity verification (`verify_chain`). Seeded 30-day baseline patient consents for clinicians, pharmacy, lab, and billing during ingestion. Mounted `GET /audit` (admin all, patient own), `GET /audit/verify`, `GET/POST /consents`, and `POST /consents/{id}/revoke`.
 - Unified API (P7): Implemented `GET /patients?q=` with multi-attribute search (name, phone, source ID, CLID) returning `linked_systems` and `best_score`. Built `GET /patients/{clid}/unified` across demographics and clinical entities with per-category policy evaluation and field-level restricted markers. Built `GET /patients/{clid}/timeline` with type, source, and date range filters returning chronological entries. Built `GET /patients/{clid}/summary` featuring active problems, reconciled current medications with planted conflict flags (`missing_from_ehr` for Atorva 10, `allergy_conflict` for Mox 500), allergies, latest lab values with 6-point trend arrays (unifying HbA1c across labs into a single `%` series), recent encounters, and claim status. Built `GET /patients/{clid}/identity` returning all linked feeder records with per-field evidence, provenance, and alternate values. Enforced zero-trust access: doctor sees all categories, pharmacist sees only medications and allergies, billing sees only claims, and patient sees only their own linked CLID.
 - App Shell & Search (P8): Completed 'Choose your badge' modal supporting all 7 user roles, calling POST /api/auth/login with 'carelens-demo' and persisting tokens in memory and sessionStorage. Implemented 3-pane layout (280px patient sidebar, flexible central canvas, 380px inspector drawer). Top bar includes 'Viewing as' role switcher (re-authenticates and refetches queries), theme toggle (light/dark paper tokens), and Cmd/Ctrl+K palette. Wired live search with MatchBadge hits (verified 'Ramesh' shows '4 systems linked - 100%'). Routes /, /patient/:id, /portal, /audit provide loading, empty, and error states. Verified via browser agent across roles and passing tests/lint.
+- Patient Workspace (P9): Patient banner with name in serif 28px, master CLID and linked feeder source IDs in mono (APL-004512, LB-77120, TX-9981, PH-30991, STAR-48221), 'Consent: Treatment Active' pill, and hero 'Viewing as' role switcher. Overview tab: cards for Active Problems (with ProvChips), Reconciled Current Medications with conflict flags (Atorva missing from EHR, Mox 500 allergy conflict) and ProvChips, Documented Allergies (with ProvChips), Latest Labs with Recharts trend lines, normal reference bands (e.g. HbA1c 4.0-5.6%, glucose 70-99 mg/dL), LOINC codes, and ProvChips, and Insurance Claims with ProvChips. Timeline tab: filtered chronological list by date with SourceBadges, ProvChips, and type/source filter chips. Identity tab: linked feeder source records with plain-language 'Why linked' explanation lines and confidence scores in mono tabular format. Role switching replays a 220 ms sweep across `Redacted` bars; verified doctor, pharmacist, and billing views differ correctly via browser agent and unit tests.
 - Root: Cross-platform npm scripts utilizing concurrently to orchestrate backend and frontend dev, seed, test, lint, and build.
 
 ## Known issues
 None.
 
 ## Next
-P9
+P10

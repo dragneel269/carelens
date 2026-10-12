@@ -39,12 +39,14 @@ export interface PatientSummaryData {
   }
   linked_systems: SystemSource[]
   active_conditions: Array<{
-    id: number
-    condition_name: string
+    id: string | number
+    display?: string
+    condition_name?: string
+    code?: string
     icd10_code?: string
-    clinical_status: string
+    clinical_status?: string
     source: string
-    source_record_id: string
+    source_record_id?: string
     recorded_at: string
   }> | RestrictedMarker
   current_medications: Array<{
@@ -52,57 +54,85 @@ export interface PatientSummaryData {
     generic_name: string
     brand_name?: string
     dose?: string
-    source: string
-    source_record_id: string
+    dosage?: string
+    source?: string
+    sources?: string[]
+    source_record_id?: string
     recorded_at: string
     has_conflict: boolean
-    conflict_type?: 'missing_from_ehr' | 'allergy_conflict' | 'dosage_mismatch'
+    conflict_type?: 'missing_from_ehr' | 'allergy_conflict' | 'dosage_mismatch' | string
     conflict_detail?: string
     ehr_prescribed?: boolean
     pharmacy_dispensed?: boolean
   }> | RestrictedMarker
   active_allergies: Array<{
-    id: number
+    id: string | number
     substance: string
+    reaction?: string
+    criticality?: string
     allergy_class?: string
     severity?: string
     source: string
-    source_record_id: string
+    source_record_id?: string
+    recorded_at: string
+  }> | RestrictedMarker
+  allergies?: Array<{
+    id: string | number
+    substance: string
+    reaction?: string
+    criticality?: string
+    allergy_class?: string
+    severity?: string
+    source: string
+    source_record_id?: string
     recorded_at: string
   }> | RestrictedMarker
   lab_trends: Array<{
     test_name: string
     loinc_code?: string
-    latest_value: number
+    current_value?: number
+    latest_value?: number
     unit?: string
     reference_range?: string
+    flag?: string
     interpretation?: string
-    latest_date: string
+    latest_date?: string
+    recorded_at?: string
+    source?: string
     trend: Array<{
       value: number
       unit?: string
-      date: string
+      date?: string
+      recorded_at?: string
+      flag?: string
       source: string
     }>
   }> | RestrictedMarker
   recent_encounters: Array<{
-    id: number
-    encounter_type: string
+    id: string | number
+    encounter_id?: string
+    reason?: string
+    encounter_type?: string
     department?: string
     facility?: string
-    period_start: string
+    period_start?: string
     period_end?: string
+    recorded_at?: string
     source: string
-    source_record_id: string
+    source_record_id?: string
   }> | RestrictedMarker
   claims: Array<{
-    id: number
-    claim_id: string
-    claim_type?: string
-    total_amount: number
-    currency: string
+    id: string | number
+    claim_id?: string
+    claimed_amount?: number
+    approved_amount?: number
+    total_amount?: number
+    currency?: string
     status: string
-    service_date: string
+    category?: string
+    description?: string
+    service_date?: string
+    recorded_at?: string
     insurer_name?: string
     source: string
   }> | RestrictedMarker
@@ -110,12 +140,17 @@ export interface PatientSummaryData {
 
 export interface TimelineItem {
   id: string
-  type: 'encounter' | 'condition' | 'allergy' | 'medication' | 'observation' | 'claim'
+  type?: 'encounter' | 'condition' | 'allergy' | 'medication' | 'observation' | 'claim' | string
+  item_type?: 'encounter' | 'condition' | 'allergy' | 'medication' | 'observation' | 'claim' | string
+  category?: string
   title: string
-  date: string
+  subtitle?: string
+  date?: string
+  recorded_at?: string
   source: SystemSource
   source_record_id: string
-  details: Record<string, unknown>
+  data?: Record<string, unknown>
+  details?: Record<string, unknown>
 }
 
 export interface IdentityLink {
