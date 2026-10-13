@@ -12,6 +12,8 @@ import {
   ShieldCheck,
   HelpCircle,
   Compass,
+  Pill,
+  Clock,
 } from 'lucide-react'
 import { useAuthStore } from '../../lib/auth'
 import { RoleCheatSheetDialog } from '../usability/RoleCheatSheetDialog'
@@ -54,7 +56,14 @@ export function TopBar({
 
   const isAudit = location.pathname.startsWith('/audit')
   const isPortal = location.pathname.startsWith('/portal')
-  const isPatients = !isAudit && !isPortal && !location.pathname.startsWith('/design')
+  const isCounter = location.pathname.startsWith('/counter')
+  const isFollowups = location.pathname.startsWith('/followups')
+  const isPatients =
+    !isAudit &&
+    !isPortal &&
+    !isCounter &&
+    !isFollowups &&
+    !location.pathname.startsWith('/design')
 
   // Global hotkey listener for '?' to trigger shortcuts dialog
   useEffect(() => {
@@ -89,8 +98,8 @@ export function TopBar({
             <span className="font-serif text-lg sm:text-xl font-semibold tracking-tight text-[var(--teal)] group-hover:opacity-90 transition-opacity">
               CareLens
             </span>
-            <span className="hidden sm:inline-block rounded-[4px] border border-[var(--line)] bg-[var(--paper)] px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[var(--ink-soft)]">
-              India MedTech
+            <span className="hidden sm:inline-block rounded-[4px] border border-[var(--line)] bg-[var(--paper)] px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[var(--teal)] font-medium">
+              Neighbourhood Care
             </span>
           </Link>
 
@@ -106,6 +115,30 @@ export function TopBar({
             >
               <Users className="h-3.5 w-3.5 shrink-0" />
               <span className="hidden sm:inline">Patients</span>
+            </Link>
+
+            <Link
+              to="/counter"
+              className={`flex items-center gap-1 sm:gap-1.5 rounded-[6px] px-2 sm:px-2.5 py-1.5 font-medium transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
+                isCounter
+                  ? 'bg-[var(--paper)] text-[var(--teal)] border border-[var(--line)]'
+                  : 'text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--paper)]'
+              }`}
+            >
+              <Pill className="h-3.5 w-3.5 shrink-0 text-[var(--source-pharmacy)]" />
+              <span className="hidden sm:inline">Counter</span>
+            </Link>
+
+            <Link
+              to="/followups"
+              className={`flex items-center gap-1 sm:gap-1.5 rounded-[6px] px-2 sm:px-2.5 py-1.5 font-medium transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
+                isFollowups
+                  ? 'bg-[var(--paper)] text-[var(--teal)] border border-[var(--line)]'
+                  : 'text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--paper)]'
+              }`}
+            >
+              <Clock className="h-3.5 w-3.5 shrink-0 text-[var(--warn)]" />
+              <span className="hidden sm:inline">Follow-ups</span>
             </Link>
 
             <Link

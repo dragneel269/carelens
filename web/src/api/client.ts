@@ -275,13 +275,17 @@ export async function apiRequest<T>(url: string, options: RequestInit = {}): Pro
 
 // React Query Hooks
 
+export async function searchPatients(query: string): Promise<PatientSearchHit[]> {
+  return apiRequest<PatientSearchHit[]>(`/api/patients?q=${encodeURIComponent(query)}`)
+}
+
 export function usePatientsSearch(query: string) {
   const token = useAuthStore((s) => s.token)
   const role = useAuthStore((s) => s.currentUser?.role)
 
   return useQuery<PatientSearchHit[]>({
     queryKey: ['patients-search', query, role, token],
-    queryFn: () => apiRequest<PatientSearchHit[]>(`/api/patients?q=${encodeURIComponent(query)}`),
+    queryFn: () => searchPatients(query),
     staleTime: 10000,
   })
 }
@@ -398,3 +402,101 @@ export function useConsents() {
     staleTime: 5000,
   })
 }
+
+// ─────────────────────────────── Counter API ──────────────────────────────────
+
+export interface OTPRequestResult {
+  message: string
+  simulated: boolean
+  otp_code: string
+  expires_in_seconds: number
+  clid: string | null
+}
+
+export interface OTPConfirmResult {
+  message: string
+  clid: string
+  consent_group: string
+  valid_until: string
+  purpose: string
+}
+
+export interface SafetyFlag {
+  flag: 'allergy_conflict' | 'duplicate_therapy' | 'missing_from_ehr' | 'brand_to_generic'
+  severity: 'critical' | 'warning' | 'info'
+  medication: string
+  generic_name?: string
+  drug_class?: string
+  allergy_substance?: string
+  allergy_class?: string
+  also_prescribed_in?: string
+  suggestion?: string
+  source: string
+  dispensed_at?: string
+  message: string
+}
+
+export interface SafetyCheckResult {
+  clid: string
+  patient_name: string
+  consent_verified: boolean
+  allergies_checked: number
+  medications_checked: number
+  flags: SafetyFlag[]
+  flag_count: number
+  critical_count: number
+}
+
+export async function requestCounterOTP(phone: string, clid?: string): Promise<OTPRequestResult> {
+  return apiRequest<OTPRequestResult>('/api/counter/otp/request', {
+    method: 'POST',
+    body: JSON.stringify({ phone, clid }),
+  })
+}
+
+export async function confirmCounterOTP(clid: string, otp_code: string): Promise<OTPConfirmResult> {
+  return apiRequest<OTPConfirmResult>('/api/counter/otp/confirm', {
+    method: 'POST',
+    body: JSON.stringify({ clid, otp_code }),
+  })
+}
+
+export function useCounterSafety(clid: string | null, enabled: boolean) {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<SafetyCheckResult>({
+    queryKey: ['counter-safety', clid, token],
+    queryFn: () => apiRequest<SafetyCheckResult>(`/api/counter/${clid}/safety`),
+    enabled: !!token && !!clid && enabled,
+    staleTime: 0,
+    retry: false,
+  })
+}
+
+// ─────────────────────────────── Followups API ────────────────────────────────
+
+export interface RefillAlert {
+  clid: string
+  patient_name: string
+  generic_name: string
+  brand_name?: string
+  dosage?: string
+  days_supply: number
+  last_dispensed: string
+  expected_refill_date: string
+  days_overdue: number
+  pharmacy: string
+}
+
+export function useFollowups(minDaysOverdue: number = 0) {
+  const token = useAuthStore((s) => s.token)
+  const role = useAuthStore((s) => s.currentUser?.role)
+  const allowed = role === 'pharmacist' || role === 'doctor' || role === 'nurse'
+
+  return useQuery<RefillAlert[]>({
+    queryKey: ['followups', minDaysOverdue, role, token],
+    queryFn: () => apiRequest<RefillAlert[]>(`/api/followups?min_days_overdue=${minDaysOverdue}`),
+    enabled: !!token && allowed,
+    staleTime: 30000,
+  })
+}
+

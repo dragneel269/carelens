@@ -717,5 +717,556 @@
         }
       }
     ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "HP-001-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "HP-001",
+          "identifier": [
+            {
+              "system": "healthpoint_clinic",
+              "value": "HP-001"
+            }
+          ],
+          "name": [
+            {
+              "text": "Priya Nair",
+              "family": "Nair",
+              "given": [
+                "Priya"
+              ]
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1992-07-22",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55001"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570002",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "HP-COND-001",
+          "subject": {
+            "reference": "Patient/HP-001"
+          },
+          "code": {
+            "text": "Recurrent sinusitis",
+            "coding": [
+              {
+                "code": "J32",
+                "display": "Chronic sinusitis"
+              }
+            ]
+          },
+          "recordedDate": "2026-08-05T10:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "AllergyIntolerance",
+          "id": "HP-ALLERGY-001",
+          "subject": {
+            "reference": "Patient/HP-001"
+          },
+          "clinicalStatus": "active",
+          "criticality": "high",
+          "substance": {
+            "text": "Penicillin",
+            "class": "penicillin"
+          },
+          "reaction": [
+            {
+              "manifestation": [
+                {
+                  "text": "Hives and throat swelling"
+                }
+              ]
+            }
+          ],
+          "recordedDate": "2026-08-05T10:10:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "HP-MED-001",
+          "subject": {
+            "reference": "Patient/HP-001"
+          },
+          "medicationCodeableConcept": {
+            "text": "Telma 40",
+            "generic": "telmisartan"
+          },
+          "authoredOn": "2026-08-05T10:20:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-002-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-SP-002",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-SP-002"
+            }
+          ],
+          "name": [
+            {
+              "text": "Suresh Pai",
+              "family": "Pai",
+              "given": [
+                "Suresh"
+              ]
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1963-11-30",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55002"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570004",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "APL-SP-COND-001",
+          "subject": {
+            "reference": "Patient/APL-SP-002"
+          },
+          "code": {
+            "text": "Type 2 diabetes mellitus",
+            "coding": [
+              {
+                "code": "E11",
+                "display": "Type 2 diabetes mellitus"
+              }
+            ]
+          },
+          "recordedDate": "2026-04-15T09:00:00Z"
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "MedicationRequest",
+          "id": "APL-SP-MED-001",
+          "subject": {
+            "reference": "Patient/APL-SP-002"
+          },
+          "medicationCodeableConcept": {
+            "text": "metformin 500mg",
+            "generic": "metformin"
+          },
+          "authoredOn": "2026-04-15T09:30:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "HP-003-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "HP-003",
+          "identifier": [
+            {
+              "system": "healthpoint_clinic",
+              "value": "HP-003"
+            }
+          ],
+          "name": [
+            {
+              "text": "Kavitha Rao",
+              "family": "Rao",
+              "given": [
+                "Kavitha"
+              ]
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1985-04-10",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55003"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570001",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      },
+      {
+        "resource": {
+          "resourceType": "Condition",
+          "id": "HP-003-COND-001",
+          "subject": {
+            "reference": "Patient/HP-003"
+          },
+          "code": {
+            "text": "Hypothyroidism",
+            "coding": [
+              {
+                "code": "E03",
+                "display": "Hypothyroidism"
+              }
+            ]
+          },
+          "recordedDate": "2026-03-01T10:00:00Z"
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-004-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-KR-004",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-KR-004"
+            }
+          ],
+          "name": [
+            {
+              "text": "K. Rao"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1985-04-10",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55003"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570001",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-NBR-0010-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-NBR-0010",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-NBR-0010"
+            }
+          ],
+          "name": [
+            {
+              "text": "Ravi Shankar"
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1970-06-15",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55004"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570003",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-NBR-0011-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-NBR-0011",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-NBR-0011"
+            }
+          ],
+          "name": [
+            {
+              "text": "Lakshmi Bai"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1955-09-01",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55005"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570005",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-NBR-0012-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-NBR-0012",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-NBR-0012"
+            }
+          ],
+          "name": [
+            {
+              "text": "Mohammed Irfan"
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1988-02-28",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55006"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570006",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-NBR-0013-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-NBR-0013",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-NBR-0013"
+            }
+          ],
+          "name": [
+            {
+              "text": "Geetha Krishnan"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1978-12-20",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55007"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570001",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-NBR-0014-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-NBR-0014",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-NBR-0014"
+            }
+          ],
+          "name": [
+            {
+              "text": "Basavaraj Patil"
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1945-03-05",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55008"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570008",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-NBR-0015-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-NBR-0015",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-NBR-0015"
+            }
+          ],
+          "name": [
+            {
+              "text": "Nandini Shetty"
+            }
+          ],
+          "gender": "female",
+          "birthDate": "1998-11-11",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55009"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570009",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "Bundle",
+    "id": "APL-NBR-0016-BUNDLE",
+    "type": "collection",
+    "entry": [
+      {
+        "resource": {
+          "resourceType": "Patient",
+          "id": "APL-NBR-0016",
+          "identifier": [
+            {
+              "system": "apollo_ehr",
+              "value": "APL-NBR-0016"
+            }
+          ],
+          "name": [
+            {
+              "text": "Harish Naik"
+            }
+          ],
+          "gender": "male",
+          "birthDate": "1965-07-04",
+          "telecom": [
+            {
+              "system": "phone",
+              "value": "90000 55010"
+            }
+          ],
+          "address": [
+            {
+              "city": "Mysuru",
+              "postalCode": "570010",
+              "state": "Karnataka"
+            }
+          ]
+        }
+      }
+    ]
   }
 ]

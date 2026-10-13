@@ -42,6 +42,11 @@ def create_db_and_tables() -> None:
             conn.commit()
         except Exception:
             pass
+        try:
+            conn.execute(text("ALTER TABLE medications ADD COLUMN days_supply INTEGER"))
+            conn.commit()
+        except Exception:
+            pass
 
 
 # Ensure schema is initialized on engine load

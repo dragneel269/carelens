@@ -267,6 +267,8 @@ def adapt_pharmacy_dispense(
     disp_id = dispense_data.get("dispense_id", f"{source_record_id}-DISP")
     dosage = dispense_data.get("dosage") or std_dosage
     qty = int(dispense_data.get("quantity", 1))
+    days_supply_raw = dispense_data.get("days_supply")
+    days_supply = int(days_supply_raw) if days_supply_raw is not None else None
 
     medication = Medication(
         source="pharmacy",
@@ -278,6 +280,7 @@ def adapt_pharmacy_dispense(
         dosage=dosage,
         quantity=qty,
         drug_class=drug_class,
+        days_supply=days_supply,
         normalized=is_norm,
         raw_data=json.dumps(dispense_data),
     )

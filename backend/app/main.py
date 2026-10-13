@@ -12,6 +12,8 @@ from app.api.admin import router as admin_router
 from app.api.audit import router as audit_router
 from app.api.auth import router as auth_router
 from app.api.consents import router as consents_router
+from app.api.counter import router as counter_router
+from app.api.followups import router as followups_router
 from app.api.patients import router as patients_router
 from app.db.session import create_db_and_tables, engine
 from app.domain.models import SourceRecord, User
@@ -54,7 +56,15 @@ app.add_middleware(
 )
 
 # Mount routes
-for r in [auth_router, admin_router, audit_router, consents_router, patients_router]:
+for r in [
+    auth_router,
+    admin_router,
+    audit_router,
+    consents_router,
+    patients_router,
+    counter_router,
+    followups_router,
+]:
     app.include_router(r)
     app.include_router(r, prefix="/api")
 

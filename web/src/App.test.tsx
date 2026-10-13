@@ -49,7 +49,7 @@ describe('App Component and Shell Layout', () => {
     expect(screen.getByText('CareLens')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Patients/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Portal/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Audit Ledger/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Audit/i })).toBeInTheDocument()
   })
 
   it('renders "Viewing as" role switcher with active badge', async () => {
