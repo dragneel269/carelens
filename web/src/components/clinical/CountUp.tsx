@@ -20,20 +20,20 @@ export function CountUp({
 }: CountUpProps) {
   const shouldReduceMotion = useReducedMotion()
   const isTest =
-    (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') ||
+    import.meta.env?.MODE === 'test' ||
     (typeof navigator !== 'undefined' && navigator.userAgent?.includes('jsdom'))
 
   const [displayValue, setDisplayValue] = React.useState<number>(() =>
     shouldReduceMotion || isTest ? value : 0
   )
+  const prevValueRef = React.useRef(displayValue)
 
   React.useEffect(() => {
     if (shouldReduceMotion || isTest) {
-      setDisplayValue(value)
       return
     }
 
-    const startValue = displayValue
+    const startValue = prevValueRef.current
     const diff = value - startValue
     if (diff === 0) return
 
@@ -49,11 +49,13 @@ export function CountUp({
       const eased = 1 - Math.pow(1 - progress, 3)
       const current = startValue + diff * eased
 
+      prevValueRef.current = current
       setDisplayValue(current)
 
       if (progress < 1) {
         animationFrameId = requestAnimationFrame(step)
       } else {
+        prevValueRef.current = value
         setDisplayValue(value)
       }
     }
@@ -62,7 +64,8 @@ export function CountUp({
     return () => cancelAnimationFrame(animationFrameId)
   }, [value, duration, shouldReduceMotion, isTest])
 
-  const formatted = decimals > 0 ? displayValue.toFixed(decimals) : Math.round(displayValue).toString()
+  const effectiveValue = shouldReduceMotion || isTest ? value : displayValue
+  const formatted = decimals > 0 ? effectiveValue.toFixed(decimals) : Math.round(effectiveValue).toString()
 
   return (
     <span className={className}>

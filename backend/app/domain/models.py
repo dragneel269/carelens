@@ -131,6 +131,9 @@ class Medication(SQLModel, table=True):
     dosage: Optional[str] = Field(default=None)
     quantity: Optional[int] = Field(default=None)
     drug_class: Optional[str] = Field(default=None)
+    days_supply: Optional[int] = Field(
+        default=None
+    )  # Number of days the dispensed quantity should last
     normalized: bool = Field(default=True, nullable=False)
     raw_data: str = Field(default="{}", nullable=False)
 

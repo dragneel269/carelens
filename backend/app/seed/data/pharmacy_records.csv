@@ -1,11 +1,20 @@
-dispense_id,pharmacy_system,patient_id,patient_name,dob,phone,pincode,brand_name,dosage,quantity,dispensed_date,pharmacist_id,notes
-DISP-8810,MedPlus Retail Pharmacy Mysuru,PH-30991,Ramesh Kumaar,1968-03-14,90000 12345,570001,Glycomet 500,500 mg,30,2026-06-15T11:20:00Z,pharm.imran,Patient advised regarding dietary intake with metformin.
-DISP-8892,MedPlus Retail Pharmacy Mysuru,PH-30991,Ramesh Kumaar,1968-03-14,90000 12345,570001,Atorva 10,10 mg,30,2026-07-20T17:10:00Z,pharm.imran,Statin therapy dispensation.
-DISP-9104,MedPlus Retail Pharmacy Mysuru,PH-30991,Ramesh Kumaar,1968-03-14,90000 12345,570001,Mox 500,500 mg,10,2026-09-16T14:40:00Z,pharm.imran,Dispensed for upper respiratory symptoms.
-DISP-FAK-1,MedPlus Retail Pharmacy,PH-FAK-0001,Ananya Deshmukh,1984-06-22,90000 21001,560002,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.
-DISP-FAK-2,MedPlus Retail Pharmacy,PH-FAK-0002,Vikramaditya Rao,1972-11-04,90000 21002,500034,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.
-DISP-FAK-4,MedPlus Retail Pharmacy,PH-FAK-0004,Arjun Singhania,1965-09-30,90000 21004,400001,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.
-DISP-FAK-5,MedPlus Retail Pharmacy,PH-FAK-0005,Meera Nambiar,1988-12-14,90000 21005,682001,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.
-DISP-FAK-6,MedPlus Retail Pharmacy,PH-FAK-0006,Deepak Ganguly,1979-04-09,90000 21006,700001,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.
-DISP-FAK-8,MedPlus Retail Pharmacy,PH-FAK-0008,Rajeshwari Iyer,1960-01-19,90000 21008,641001,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.
-DISP-FAK-9,MedPlus Retail Pharmacy,PH-FAK-0009,Tariq Mansoori,1982-10-08,90000 21009,226001,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.
+dispense_id,pharmacy_system,patient_id,patient_name,dob,phone,pincode,brand_name,dosage,quantity,dispensed_date,pharmacist_id,notes,days_supply
+DISP-8810,MedPlus Retail Pharmacy Mysuru,PH-30991,Ramesh Kumaar,1968-03-14,90000 12345,570001,Glycomet 500,500 mg,30,2026-06-15T11:20:00Z,pharm.imran,Patient advised regarding dietary intake with metformin.,
+DISP-8892,MedPlus Retail Pharmacy Mysuru,PH-30991,Ramesh Kumaar,1968-03-14,90000 12345,570001,Atorva 10,10 mg,30,2026-07-20T17:10:00Z,pharm.imran,Statin therapy dispensation.,
+DISP-9104,MedPlus Retail Pharmacy Mysuru,PH-30991,Ramesh Kumaar,1968-03-14,90000 12345,570001,Mox 500,500 mg,10,2026-09-16T14:40:00Z,pharm.imran,Dispensed for upper respiratory symptoms.,
+DISP-FAK-1,MedPlus Retail Pharmacy,PH-FAK-0001,Ananya Deshmukh,1984-06-22,90000 21001,560002,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.,
+DISP-FAK-2,MedPlus Retail Pharmacy,PH-FAK-0002,Vikramaditya Rao,1972-11-04,90000 21002,500034,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.,
+DISP-FAK-4,MedPlus Retail Pharmacy,PH-FAK-0004,Arjun Singhania,1965-09-30,90000 21004,400001,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.,
+DISP-FAK-5,MedPlus Retail Pharmacy,PH-FAK-0005,Meera Nambiar,1988-12-14,90000 21005,682001,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.,
+DISP-FAK-6,MedPlus Retail Pharmacy,PH-FAK-0006,Deepak Ganguly,1979-04-09,90000 21006,700001,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.,
+DISP-FAK-8,MedPlus Retail Pharmacy,PH-FAK-0008,Rajeshwari Iyer,1960-01-19,90000 21008,641001,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.,
+DISP-FAK-9,MedPlus Retail Pharmacy,PH-FAK-0009,Tariq Mansoori,1982-10-08,90000 21009,226001,Telma 40,40 mg,30,2026-06-20T12:00:00Z,pharm.imran,Regular dispensation.,
+CC-DISP-0021,Chemist Corner Mysuru,CC-PRIYA-001,Priya Nair,1992-07-22,90000 55001,570002,Augmentin 625,625 mg,14,2026-10-01T16:30:00Z,pharm.imran,Dispensed for acute sinusitis — NO allergy check performed.,7
+MP-DISP-3301,MedPlus Retail Pharmacy Mysuru,PH-SP-002,Suresh Pai,1963-11-30,90000 55002,570004,Glycomet 500,500 mg,60,2026-08-20T11:00:00Z,pharm.imran,Routine refill — patient did not return after 30 days.,30
+AP-DISP-NBR-10,Apollo Pharmacy Mysuru,AP-NBR-0010,Ravi Shankar,1970-06-15,90000 55004,570003,Amlodac 5,5 mg,30,2026-09-01T10:00:00Z,pharm.imran,Routine dispensation.,30
+AP-DISP-NBR-11,Apollo Pharmacy Mysuru,AP-NBR-0011,Lakshmi Bai,1955-09-01,90000 55005,570005,Amlodac 5,5 mg,30,2026-09-01T10:00:00Z,pharm.imran,Routine dispensation.,30
+AP-DISP-NBR-12,Apollo Pharmacy Mysuru,AP-NBR-0012,Mohammed Irfan,1988-02-28,90000 55006,570006,Amlodac 5,5 mg,30,2026-09-01T10:00:00Z,pharm.imran,Routine dispensation.,30
+AP-DISP-NBR-13,Apollo Pharmacy Mysuru,AP-NBR-0013,Geetha Krishnan,1978-12-20,90000 55007,570001,Amlodac 5,5 mg,30,2026-09-01T10:00:00Z,pharm.imran,Routine dispensation.,30
+AP-DISP-NBR-14,Apollo Pharmacy Mysuru,AP-NBR-0014,Basavaraj Patil,1945-03-05,90000 55008,570008,Amlodac 5,5 mg,30,2026-09-01T10:00:00Z,pharm.imran,Routine dispensation.,30
+AP-DISP-NBR-15,Apollo Pharmacy Mysuru,AP-NBR-0015,Nandini Shetty,1998-11-11,90000 55009,570009,Amlodac 5,5 mg,30,2026-09-01T10:00:00Z,pharm.imran,Routine dispensation.,30
+AP-DISP-NBR-16,Apollo Pharmacy Mysuru,AP-NBR-0016,Harish Naik,1965-07-04,90000 55010,570010,Amlodac 5,5 mg,30,2026-09-01T10:00:00Z,pharm.imran,Routine dispensation.,30

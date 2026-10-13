@@ -894,6 +894,62 @@ export default function DesignSystemPage() {
             />
           </div>
         </section>
+
+        {/* 5. National Integration Architecture — ABHA Bridge (Roadmap) */}
+        <section className="space-y-4">
+          <div className="border-b border-[var(--line)] pb-2">
+            <h2 className="font-serif text-xl font-medium text-[var(--ink)]">
+              5. National Integration Architecture — ABHA Bridge (Roadmap)
+            </h2>
+            <p className="text-xs text-[var(--ink-soft)]">
+              Coexistence with ABDM / ABHA national stack without dependency on national IDs for local clinics.
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-[10px] border border-[var(--primary)]/40 bg-[var(--surface)] p-5 shadow-2xs space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase font-bold text-[var(--teal)] bg-[var(--tint-teal)] px-2 py-0.5 rounded-[4px] border border-[var(--primary)]/30">
+                  Active (This Build)
+                </span>
+              </div>
+              <h3 className="font-serif text-base font-semibold text-[var(--ink)]">
+                Local Continuity Layer
+              </h3>
+              <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
+                Connects single-doctor clinics and local standalone chemists. Matches records via phone &amp; phonetic fuzzy algorithms. 24h time-boxed OTP consent at point of dispense.
+              </p>
+            </div>
+
+            <div className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-5 shadow-2xs space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase font-bold text-[var(--warn)] bg-[var(--warn)]/10 px-2 py-0.5 rounded-[4px] border border-[var(--warn)]/30">
+                  Roadmap Bridge
+                </span>
+              </div>
+              <h3 className="font-serif text-base font-semibold text-[var(--ink)]">
+                ABHA Consent Ingestion
+              </h3>
+              <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
+                Optional gateway pulling ABDM HIU/HIP consent artifacts into CareLens. Bridges national hospital discharge summaries into the local chemist ledger when patient permits.
+              </p>
+            </div>
+
+            <div className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-5 shadow-2xs space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase font-bold text-[var(--ok)] bg-[var(--ok)]/10 px-2 py-0.5 rounded-[4px] border border-[var(--ok)]/30">
+                  Privacy by Design
+                </span>
+              </div>
+              <h3 className="font-serif text-base font-semibold text-[var(--ink)]">
+                DPDP 2023 Principles
+              </h3>
+              <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
+                Purpose limitation (treatment vs payment vs counter), data minimisation by role, instant consent revocation, and SHA-256 cryptographic audit chain.
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   )

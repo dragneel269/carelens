@@ -7,6 +7,8 @@ import { PatientDetailPage } from './pages/PatientDetailPage'
 import { PortalPage } from './pages/PortalPage'
 import { AuditPage } from './pages/AuditPage'
 import { DemoPage } from './pages/DemoPage'
+import { CounterPage } from './pages/CounterPage'
+import { FollowupsPage } from './pages/FollowupsPage'
 import { ScriptOverlay } from './components/demo/ScriptOverlay'
 import DesignSystemPage from './pages/DesignSystemPage'
 import { useAuthStore } from './lib/auth'
@@ -84,6 +86,26 @@ export default function App() {
           element={
             <AppShell showSidebar={false}>
               <AuditPage />
+            </AppShell>
+          }
+        />
+
+        {/* Chemist Counter View */}
+        <Route
+          path="/counter"
+          element={
+            <AppShell showSidebar={false}>
+              <CounterPage />
+            </AppShell>
+          }
+        />
+
+        {/* Refill Gap Alerts */}
+        <Route
+          path="/followups"
+          element={
+            <AppShell showSidebar={false}>
+              <FollowupsPage />
             </AppShell>
           }
         />

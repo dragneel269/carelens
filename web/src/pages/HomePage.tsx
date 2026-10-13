@@ -3,10 +3,11 @@ import {
   FileText,
   Shield,
   ArrowRight,
-  Database,
   CheckCircle2,
   AlertCircle,
   UserX,
+  Pill,
+  Clock,
 } from 'lucide-react'
 import { usePatientsSearch } from '../api/client'
 import { useAuthStore } from '../lib/auth'
@@ -37,10 +38,13 @@ export function HomePage() {
               </span>
             </div>
             <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--ink)]">
-              Welcome, {currentUser?.full_name || 'Clinician'}
+              CareLens Neighbourhood
             </h1>
-            <p className="mt-1 text-sm text-[var(--ink-soft)] max-w-2xl">
-              Cross-facility identity resolution without national IDs. Real-time consent evaluation and role-based data redaction.
+            <p className="mt-1 text-sm text-[var(--ink-soft)] max-w-2xl font-serif italic text-[var(--teal)]">
+              &ldquo;ABDM connects hospitals to the nation. CareLens connects your doctor to your chemist, no national ID required.&rdquo;
+            </p>
+            <p className="mt-0.5 text-xs text-[var(--ink-soft)] max-w-2xl">
+              Cross-facility continuity of care between local single-doctor clinics and standalone chemists. Real-time simulated OTP consent, allergy safety checks, and zero-trust role redaction.
             </p>
           </div>
 
@@ -127,43 +131,56 @@ export function HomePage() {
       ) : null}
 
       {/* Quick Navigation Cards */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          onClick={() => navigate('/counter')}
+          className="rounded-[8px] border border-[var(--source-pharmacy)]/40 bg-[var(--surface)] p-4 hover:border-[var(--source-pharmacy)] cursor-pointer transition-all shadow-2xs group"
+        >
+          <div className="flex items-center gap-2 text-[var(--source-pharmacy)]">
+            <Pill className="h-4 w-4" />
+            <h3 className="font-serif font-semibold text-sm text-[var(--ink)] group-hover:text-[var(--source-pharmacy)]">Chemist Counter</h3>
+          </div>
+          <p className="mt-1 text-xs text-[var(--ink-soft)]">
+            Simulated OTP consent, allergy safety check, duplicate therapy detection at point of dispense.
+          </p>
+        </div>
+
+        <div
+          onClick={() => navigate('/followups')}
+          className="rounded-[8px] border border-[var(--warn)]/40 bg-[var(--surface)] p-4 hover:border-[var(--warn)] cursor-pointer transition-all shadow-2xs group"
+        >
+          <div className="flex items-center gap-2 text-[var(--warn)]">
+            <Clock className="h-4 w-4" />
+            <h3 className="font-serif font-semibold text-sm text-[var(--ink)] group-hover:text-[var(--warn)]">Refill Gap Alerts</h3>
+          </div>
+          <p className="mt-1 text-xs text-[var(--ink-soft)]">
+            Identify patients with overdue chronic medication refills across neighbourhood pharmacies.
+          </p>
+        </div>
+
         <div
           onClick={() => navigate('/portal')}
-          className="rounded-[8px] border border-[var(--line)] bg-[var(--surface)] p-4 hover:border-[var(--teal)] cursor-pointer transition-all"
+          className="rounded-[8px] border border-[var(--line)] bg-[var(--surface)] p-4 hover:border-[var(--teal)] cursor-pointer transition-all shadow-2xs group"
         >
           <div className="flex items-center gap-2 text-[var(--teal)]">
             <FileText className="h-4 w-4" />
-            <h3 className="font-serif font-semibold text-sm text-[var(--ink)]">Patient Portal</h3>
+            <h3 className="font-serif font-semibold text-sm text-[var(--ink)] group-hover:text-[var(--teal)]">Patient Portal</h3>
           </div>
           <p className="mt-1 text-xs text-[var(--ink-soft)]">
-            Self-service patient consent management, consent revocations, and data access history.
+            Self-service patient consent management, consent revocations, and access history.
           </p>
         </div>
 
         <div
           onClick={() => navigate('/audit')}
-          className="rounded-[8px] border border-[var(--line)] bg-[var(--surface)] p-4 hover:border-[var(--teal)] cursor-pointer transition-all"
+          className="rounded-[8px] border border-[var(--line)] bg-[var(--surface)] p-4 hover:border-[var(--teal)] cursor-pointer transition-all shadow-2xs group"
         >
           <div className="flex items-center gap-2 text-[var(--teal)]">
             <Shield className="h-4 w-4" />
-            <h3 className="font-serif font-semibold text-sm text-[var(--ink)]">Audit Ledger</h3>
+            <h3 className="font-serif font-semibold text-sm text-[var(--ink)] group-hover:text-[var(--teal)]">Audit Ledger</h3>
           </div>
           <p className="mt-1 text-xs text-[var(--ink-soft)]">
             Cryptographic SHA-256 tamper-evident access log verifying chain integrity.
-          </p>
-        </div>
-
-        <div
-          onClick={() => navigate('/design')}
-          className="rounded-[8px] border border-[var(--line)] bg-[var(--surface)] p-4 hover:border-[var(--teal)] cursor-pointer transition-all"
-        >
-          <div className="flex items-center gap-2 text-[var(--teal)]">
-            <Database className="h-4 w-4" />
-            <h3 className="font-serif font-semibold text-sm text-[var(--ink)]">Design System</h3>
-          </div>
-          <p className="mt-1 text-xs text-[var(--ink-soft)]">
-            Clinical editorial tokens, typography, and interactive component specimens.
           </p>
         </div>
       </div>

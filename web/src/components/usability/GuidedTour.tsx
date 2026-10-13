@@ -82,9 +82,11 @@ export function GuidedTour({ forceOpen = false, onClose }: GuidedTourProps) {
 
   React.useEffect(() => {
     if (forceOpen) {
-      setIsOpen(true)
-      setCurrentStep(0)
-      return
+      const timer = setTimeout(() => {
+        setIsOpen(true)
+        setCurrentStep(0)
+      }, 0)
+      return () => clearTimeout(timer)
     }
 
     const completed = localStorage.getItem("carelens_tour_completed")

@@ -721,10 +721,331 @@ def generate_all_datasets() -> Dict[str, Any]:
         ],
     }
 
-    # Aggregate datasets
-    all_ehr = [ehr_hero_patient] + ehr_faker_entries + [ehr_amb_1, ehr_amb_2]
-    all_lab = [lab_a_hero, lab_b_hero] + lab_faker_entries + [lab_amb_1, lab_amb_2]
-    all_pharmacy = pharmacy_hero_rows + pharmacy_faker_rows
+    # -------------------------------------------------------------------------
+    # 4. Neighbourhood Extension: 2 clinics, 3 pharmacies, 1 lab, 11 patients
+    # -------------------------------------------------------------------------
+    # Demo scenario 1: Priya Nair — penicillin allergy (clinic EHR) +
+    #                  Augmentin 625 dispensed at Chemist Corner (DIFFERENT pharmacy)
+    # Demo scenario 2: Suresh Pai — diabetic, Metformin last dispensed >20 days ago
+    # Demo scenario 3: Kavitha Rao — visiting second clinic with no shared history
+    # (Ramesh Kumar remains scenario 4: Atorvastatin dispensed but missing from EHR)
+
+    neighbourhood_ehr_entries = []
+    neighbourhood_pharmacy_rows = []
+    neighbourhood_lab_entries = []
+
+    # --- Scenario 1: Priya Nair ---
+    priya_ehr = {
+        "resourceType": "Bundle",
+        "id": "HP-001-BUNDLE",
+        "type": "collection",
+        "entry": [
+            {
+                "resource": {
+                    "resourceType": "Patient",
+                    "id": "HP-001",
+                    "identifier": [{"system": "healthpoint_clinic", "value": "HP-001"}],
+                    "name": [{"text": "Priya Nair", "family": "Nair", "given": ["Priya"]}],
+                    "gender": "female",
+                    "birthDate": "1992-07-22",
+                    "telecom": [{"system": "phone", "value": "90000 55001"}],
+                    "address": [{"city": "Mysuru", "postalCode": "570002", "state": "Karnataka"}],
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "Condition",
+                    "id": "HP-COND-001",
+                    "subject": {"reference": "Patient/HP-001"},
+                    "code": {
+                        "text": "Recurrent sinusitis",
+                        "coding": [{"code": "J32", "display": "Chronic sinusitis"}],
+                    },
+                    "recordedDate": "2026-08-05T10:00:00Z",
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "AllergyIntolerance",
+                    "id": "HP-ALLERGY-001",
+                    "subject": {"reference": "Patient/HP-001"},
+                    "clinicalStatus": "active",
+                    "criticality": "high",
+                    "substance": {"text": "Penicillin", "class": "penicillin"},
+                    "reaction": [{"manifestation": [{"text": "Hives and throat swelling"}]}],
+                    "recordedDate": "2026-08-05T10:10:00Z",
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "MedicationRequest",
+                    "id": "HP-MED-001",
+                    "subject": {"reference": "Patient/HP-001"},
+                    "medicationCodeableConcept": {"text": "Telma 40", "generic": "telmisartan"},
+                    "authoredOn": "2026-08-05T10:20:00Z",
+                }
+            },
+        ],
+    }
+    neighbourhood_ehr_entries.append(priya_ehr)
+
+    # Priya goes to Chemist Corner (different pharmacy) and gets Augmentin — ALLERGY CONFLICT!
+    neighbourhood_pharmacy_rows.extend(
+        [
+            {
+                "dispense_id": "CC-DISP-0021",
+                "pharmacy_system": "Chemist Corner Mysuru",
+                "patient_id": "CC-PRIYA-001",
+                "patient_name": "Priya Nair",
+                "dob": "1992-07-22",
+                "phone": "90000 55001",
+                "pincode": "570002",
+                "brand_name": "Augmentin 625",
+                "dosage": "625 mg",
+                "quantity": 14,
+                "days_supply": 7,
+                "dispensed_date": "2026-10-01T16:30:00Z",
+                "pharmacist_id": "pharm.imran",
+                "notes": "Dispensed for acute sinusitis — NO allergy check performed.",
+            }
+        ]
+    )
+
+    # --- Scenario 2: Suresh Pai — overdue metformin refill ---
+    suresh_ehr = {
+        "resourceType": "Bundle",
+        "id": "APL-002-BUNDLE",
+        "type": "collection",
+        "entry": [
+            {
+                "resource": {
+                    "resourceType": "Patient",
+                    "id": "APL-SP-002",
+                    "identifier": [{"system": "apollo_ehr", "value": "APL-SP-002"}],
+                    "name": [{"text": "Suresh Pai", "family": "Pai", "given": ["Suresh"]}],
+                    "gender": "male",
+                    "birthDate": "1963-11-30",
+                    "telecom": [{"system": "phone", "value": "90000 55002"}],
+                    "address": [{"city": "Mysuru", "postalCode": "570004", "state": "Karnataka"}],
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "Condition",
+                    "id": "APL-SP-COND-001",
+                    "subject": {"reference": "Patient/APL-SP-002"},
+                    "code": {
+                        "text": "Type 2 diabetes mellitus",
+                        "coding": [{"code": "E11", "display": "Type 2 diabetes mellitus"}],
+                    },
+                    "recordedDate": "2026-04-15T09:00:00Z",
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "MedicationRequest",
+                    "id": "APL-SP-MED-001",
+                    "subject": {"reference": "Patient/APL-SP-002"},
+                    "medicationCodeableConcept": {
+                        "text": "metformin 500mg",
+                        "generic": "metformin",
+                    },
+                    "authoredOn": "2026-04-15T09:30:00Z",
+                }
+            },
+        ],
+    }
+    neighbourhood_ehr_entries.append(suresh_ehr)
+
+    # Suresh last filled metformin 23 days ago (days_supply=30) → overdue
+    neighbourhood_pharmacy_rows.append(
+        {
+            "dispense_id": "MP-DISP-3301",
+            "pharmacy_system": "MedPlus Retail Pharmacy Mysuru",
+            "patient_id": "PH-SP-002",
+            "patient_name": "Suresh Pai",
+            "dob": "1963-11-30",
+            "phone": "90000 55002",
+            "pincode": "570004",
+            "brand_name": "Glycomet 500",
+            "dosage": "500 mg",
+            "quantity": 60,
+            "days_supply": 30,
+            "dispensed_date": "2026-08-20T11:00:00Z",  # Dispensed ~54d ago; ~24d overdue on Oct 13
+            "pharmacist_id": "pharm.imran",
+            "notes": "Routine refill — patient did not return after 30 days.",
+        }
+    )
+
+    # --- Scenario 3: Kavitha Rao — new to second clinic, no shared history ---
+    kavitha_ehr_clinic1 = {
+        "resourceType": "Bundle",
+        "id": "HP-003-BUNDLE",
+        "type": "collection",
+        "entry": [
+            {
+                "resource": {
+                    "resourceType": "Patient",
+                    "id": "HP-003",
+                    "identifier": [{"system": "healthpoint_clinic", "value": "HP-003"}],
+                    "name": [{"text": "Kavitha Rao", "family": "Rao", "given": ["Kavitha"]}],
+                    "gender": "female",
+                    "birthDate": "1985-04-10",
+                    "telecom": [{"system": "phone", "value": "90000 55003"}],
+                    "address": [{"city": "Mysuru", "postalCode": "570001", "state": "Karnataka"}],
+                }
+            },
+            {
+                "resource": {
+                    "resourceType": "Condition",
+                    "id": "HP-003-COND-001",
+                    "subject": {"reference": "Patient/HP-003"},
+                    "code": {
+                        "text": "Hypothyroidism",
+                        "coding": [{"code": "E03", "display": "Hypothyroidism"}],
+                    },
+                    "recordedDate": "2026-03-01T10:00:00Z",
+                }
+            },
+        ],
+    }
+    neighbourhood_ehr_entries.append(kavitha_ehr_clinic1)
+
+    # Kavitha visits Apollo Clinic (second clinic) — appears as a new patient
+    kavitha_ehr_clinic2 = {
+        "resourceType": "Bundle",
+        "id": "APL-004-BUNDLE",
+        "type": "collection",
+        "entry": [
+            {
+                "resource": {
+                    "resourceType": "Patient",
+                    "id": "APL-KR-004",
+                    "identifier": [{"system": "apollo_ehr", "value": "APL-KR-004"}],
+                    "name": [{"text": "K. Rao"}],  # Name variant — engine must score carefully
+                    "gender": "female",
+                    "birthDate": "1985-04-10",
+                    "telecom": [{"system": "phone", "value": "90000 55003"}],
+                    "address": [{"city": "Mysuru", "postalCode": "570001", "state": "Karnataka"}],
+                }
+            },
+        ],
+    }
+    neighbourhood_ehr_entries.append(kavitha_ehr_clinic2)
+
+    # --- Remaining neighbourhood patients (simple, 1-2 systems) ---
+    neighbourhood_configs = [
+        {
+            "name": "Ravi Shankar",
+            "dob": "1970-06-15",
+            "gender": "male",
+            "phone": "90000 55004",
+            "pincode": "570003",
+        },
+        {
+            "name": "Lakshmi Bai",
+            "dob": "1955-09-01",
+            "gender": "female",
+            "phone": "90000 55005",
+            "pincode": "570005",
+        },
+        {
+            "name": "Mohammed Irfan",
+            "dob": "1988-02-28",
+            "gender": "male",
+            "phone": "90000 55006",
+            "pincode": "570006",
+        },
+        {
+            "name": "Geetha Krishnan",
+            "dob": "1978-12-20",
+            "gender": "female",
+            "phone": "90000 55007",
+            "pincode": "570001",
+        },
+        {
+            "name": "Basavaraj Patil",
+            "dob": "1945-03-05",
+            "gender": "male",
+            "phone": "90000 55008",
+            "pincode": "570008",
+        },
+        {
+            "name": "Nandini Shetty",
+            "dob": "1998-11-11",
+            "gender": "female",
+            "phone": "90000 55009",
+            "pincode": "570009",
+        },
+        {
+            "name": "Harish Naik",
+            "dob": "1965-07-04",
+            "gender": "male",
+            "phone": "90000 55010",
+            "pincode": "570010",
+        },
+    ]
+    for idx, nc in enumerate(neighbourhood_configs, start=10):
+        n_ehr_id = f"APL-NBR-{idx:04d}"
+        neighbourhood_ehr_entries.append(
+            {
+                "resourceType": "Bundle",
+                "id": f"{n_ehr_id}-BUNDLE",
+                "type": "collection",
+                "entry": [
+                    {
+                        "resource": {
+                            "resourceType": "Patient",
+                            "id": n_ehr_id,
+                            "identifier": [{"system": "apollo_ehr", "value": n_ehr_id}],
+                            "name": [{"text": nc["name"]}],
+                            "gender": nc["gender"],
+                            "birthDate": nc["dob"],
+                            "telecom": [{"system": "phone", "value": nc["phone"]}],
+                            "address": [
+                                {
+                                    "city": "Mysuru",
+                                    "postalCode": nc["pincode"],
+                                    "state": "Karnataka",
+                                }
+                            ],
+                        }
+                    }
+                ],
+            }
+        )
+        neighbourhood_pharmacy_rows.append(
+            {
+                "dispense_id": f"AP-DISP-NBR-{idx}",
+                "pharmacy_system": "Apollo Pharmacy Mysuru",
+                "patient_id": f"AP-NBR-{idx:04d}",
+                "patient_name": nc["name"],
+                "dob": nc["dob"],
+                "phone": nc["phone"],
+                "pincode": nc["pincode"],
+                "brand_name": "Amlodac 5",
+                "dosage": "5 mg",
+                "quantity": 30,
+                "days_supply": 30,
+                "dispensed_date": "2026-09-01T10:00:00Z",
+                "pharmacist_id": "pharm.imran",
+                "notes": "Routine dispensation.",
+            }
+        )
+
+    # -------------------------------------------------------------------------
+    # Aggregate all datasets (neighbourhood appended AFTER existing data)
+    # -------------------------------------------------------------------------
+    all_ehr = (
+        [ehr_hero_patient] + ehr_faker_entries + [ehr_amb_1, ehr_amb_2] + neighbourhood_ehr_entries
+    )
+    all_lab = (
+        [lab_a_hero, lab_b_hero]
+        + lab_faker_entries
+        + [lab_amb_1, lab_amb_2]
+        + neighbourhood_lab_entries
+    )
+    all_pharmacy = pharmacy_hero_rows + pharmacy_faker_rows + neighbourhood_pharmacy_rows
     all_claims = [insurer_hero] + claims_faker_entries
 
     # Persist JSON and CSV datasets
@@ -742,9 +1063,16 @@ def generate_all_datasets() -> Dict[str, Any]:
 
     pharm_csv_path = DATA_DIR / "pharmacy_records.csv"
     if all_pharmacy:
-        fieldnames = list(all_pharmacy[0].keys())
+        # Use union of all keys so old rows (no days_supply) and new rows both serialize
+        all_keys: list[str] = []
+        seen_keys: set[str] = set()
+        for row in all_pharmacy:
+            for k in row.keys():
+                if k not in seen_keys:
+                    all_keys.append(k)
+                    seen_keys.add(k)
         with open(pharm_csv_path, "w", encoding="utf-8", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer = csv.DictWriter(f, fieldnames=all_keys, extrasaction="ignore", restval="")
             writer.writeheader()
             writer.writerows(all_pharmacy)
 

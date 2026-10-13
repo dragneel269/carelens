@@ -82,6 +82,25 @@ BRAND_MAPPINGS: Dict[str, Dict[str, str]] = {
         "indication": "Bacterial Infection",
         "allergy_contraindication_class": "penicillin",
     },
+    "Augmentin 625": {
+        "generic": "amoxicillin-clavulanate",
+        "strength": "625 mg",
+        "drug_class": "penicillin",
+        "indication": "Bacterial Infection",
+        "allergy_contraindication_class": "penicillin",
+    },
+    "Amlodac 5": {
+        "generic": "amlodipine",
+        "strength": "5 mg",
+        "drug_class": "calcium_channel_blocker",
+        "indication": "Hypertension",
+    },
+    "Jalra M 50/500": {
+        "generic": "vildagliptin-metformin",
+        "strength": "50/500 mg",
+        "drug_class": "dpp4_inhibitor_biguanide_combo",
+        "indication": "Type 2 Diabetes Mellitus",
+    },
 }
 
 
