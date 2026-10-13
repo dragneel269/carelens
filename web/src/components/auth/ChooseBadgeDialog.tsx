@@ -20,24 +20,52 @@ interface ChooseBadgeDialogProps {
   onClose: () => void
 }
 
-const ROLE_ICONS: Record<string, React.ReactNode> = {
-  doctor: <Stethoscope className="h-4 w-4 text-[var(--teal)]" />,
-  nurse: <HeartPulse className="h-4 w-4 text-[var(--teal)]" />,
-  pharmacist: <Pill className="h-4 w-4 text-[var(--source-pharmacy)]" />,
-  lab_tech: <FlaskConical className="h-4 w-4 text-[var(--source-lab)]" />,
-  billing: <Receipt className="h-4 w-4 text-[var(--source-claims)]" />,
-  admin: <ShieldCheck className="h-4 w-4 text-[var(--ink-soft)]" />,
-  patient: <UserIcon className="h-4 w-4 text-[var(--teal)]" />,
-}
-
-const ROLE_BADGE_STYLE: Record<string, string> = {
-  doctor: 'bg-[#0E5E63]/10 text-[var(--teal)] border-[#0E5E63]/30',
-  nurse: 'bg-[#0E5E63]/10 text-[var(--teal)] border-[#0E5E63]/30',
-  pharmacist: 'bg-[#C07A1F]/10 text-[var(--source-pharmacy)] border-[#C07A1F]/30',
-  lab_tech: 'bg-[#4F7F3A]/10 text-[var(--source-lab)] border-[#4F7F3A]/30',
-  billing: 'bg-[#8C5B45]/10 text-[var(--source-claims)] border-[#8C5B45]/30',
-  admin: 'bg-[var(--ink)]/10 text-[var(--ink)] border-[var(--ink)]/30',
-  patient: 'bg-[#0E5E63]/10 text-[var(--teal)] border-[#0E5E63]/30',
+const ROLE_AVATAR_CONFIG: Record<
+  string,
+  { icon: React.ReactNode; bg: string; text: string; badgeStyle: string }
+> = {
+  doctor: {
+    icon: <Stethoscope className="h-4 w-4" />,
+    bg: 'bg-[var(--primary)]',
+    text: 'text-white',
+    badgeStyle: 'bg-[var(--tint-teal)] text-[var(--primary-strong)] border-[var(--primary)]/40',
+  },
+  nurse: {
+    icon: <HeartPulse className="h-4 w-4" />,
+    bg: 'bg-[var(--primary-strong)]',
+    text: 'text-white',
+    badgeStyle: 'bg-[var(--tint-teal)] text-[var(--primary-strong)] border-[var(--primary)]/40',
+  },
+  pharmacist: {
+    icon: <Pill className="h-4 w-4" />,
+    bg: 'bg-[var(--source-pharmacy)]',
+    text: 'text-white',
+    badgeStyle: 'bg-[var(--source-pharmacy)]/15 text-[var(--source-pharmacy)] border-[var(--source-pharmacy)]/40',
+  },
+  lab_tech: {
+    icon: <FlaskConical className="h-4 w-4" />,
+    bg: 'bg-[var(--source-lab)]',
+    text: 'text-white',
+    badgeStyle: 'bg-[var(--source-lab)]/15 text-[var(--source-lab)] border-[var(--source-lab)]/40',
+  },
+  billing: {
+    icon: <Receipt className="h-4 w-4" />,
+    bg: 'bg-[var(--source-claims)]',
+    text: 'text-white',
+    badgeStyle: 'bg-[var(--source-claims)]/15 text-[var(--source-claims)] border-[var(--source-claims)]/40',
+  },
+  admin: {
+    icon: <ShieldCheck className="h-4 w-4" />,
+    bg: 'bg-[var(--ink)]',
+    text: 'text-white',
+    badgeStyle: 'bg-[var(--ink)]/10 text-[var(--ink)] border-[var(--ink)]/30',
+  },
+  patient: {
+    icon: <UserIcon className="h-4 w-4" />,
+    bg: 'bg-[var(--ok)]',
+    text: 'text-white',
+    badgeStyle: 'bg-[var(--ok)]/15 text-[var(--ok)] border-[var(--ok)]/40',
+  },
 }
 
 export function ChooseBadgeDialog({ open, onClose }: ChooseBadgeDialogProps) {
@@ -129,9 +157,13 @@ export function ChooseBadgeDialog({ open, onClose }: ChooseBadgeDialogProps) {
                 }`}
               >
                 <div className="flex w-full items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-[6px] border border-[var(--line)] bg-[var(--paper)]">
-                      {ROLE_ICONS[badge.role]}
+                  <div className="flex items-center gap-2.5">
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-[8px] font-medium shadow-xs ${
+                        ROLE_AVATAR_CONFIG[badge.role]?.bg ?? 'bg-[var(--primary)]'
+                      } ${ROLE_AVATAR_CONFIG[badge.role]?.text ?? 'text-white'}`}
+                    >
+                      {ROLE_AVATAR_CONFIG[badge.role]?.icon}
                     </div>
                     <div>
                       <div className="font-serif text-sm font-semibold tracking-tight text-[var(--ink)]">
@@ -144,8 +176,8 @@ export function ChooseBadgeDialog({ open, onClose }: ChooseBadgeDialogProps) {
                   </div>
 
                   <span
-                    className={`rounded-[4px] border px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider ${
-                      ROLE_BADGE_STYLE[badge.role]
+                    className={`rounded-[4px] border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider ${
+                      ROLE_AVATAR_CONFIG[badge.role]?.badgeStyle ?? 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink)]'
                     }`}
                   >
                     {badge.role}

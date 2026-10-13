@@ -13,6 +13,7 @@ import { useAuthStore } from '../lib/auth'
 import { HashChip } from '../components/clinical/HashChip'
 import { SkeletonCard } from '../components/clinical/SkeletonCard'
 import { EmptyState } from '../components/clinical/EmptyState'
+import { CountUp } from '../components/clinical/CountUp'
 
 export function AuditPage() {
   const currentUser = useAuthStore((s) => s.currentUser)
@@ -109,7 +110,7 @@ export function AuditPage() {
                   <div>
                     <span className="font-mono font-bold block text-sm">Chain Intact (ok)</span>
                     <span className="text-[10px] font-mono text-[var(--ink-soft)] block">
-                      {verify?.count || verify?.total_entries || entries.length} contiguous blocks verified
+                      <CountUp value={verify?.count || verify?.total_entries || entries.length} /> contiguous blocks verified
                     </span>
                   </div>
                 </div>
@@ -136,7 +137,7 @@ export function AuditPage() {
               onClick={handleVerifyClick}
               disabled={isVerifying || isFetchingVerify}
               data-testid="verify-ledger-button"
-              className="inline-flex items-center justify-center gap-2 rounded-[6px] border border-[var(--teal)] bg-[var(--teal)] px-4 py-2.5 font-sans text-xs font-semibold text-white shadow-2xs hover:bg-[var(--teal)]/90 transition-colors cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 rounded-[6px] border border-[var(--teal)] bg-[var(--teal)] px-4 py-2.5 font-sans text-xs font-semibold text-white shadow-2xs hover:bg-[var(--teal)]/90 transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50"
             >
               <RefreshCw
                 className={`h-3.5 w-3.5 ${isVerifying || isFetchingVerify ? 'animate-spin' : ''}`}
@@ -228,6 +229,7 @@ export function AuditPage() {
             <EmptyState
               title="Failed to load ledger"
               description={error?.message || 'Access denied or database connection issue.'}
+              nextStep="Switch to IT Admin (Neha Sharma) above or check backend status."
               action={{ label: 'Retry', onClick: () => refetch() }}
             />
           </div>
@@ -236,6 +238,7 @@ export function AuditPage() {
             <EmptyState
               title="No ledger events found"
               description="No audit records match your selected filter criteria."
+              nextStep="Reset filter to 'All Decisions' or trigger reads in the patient chart."
             />
           </div>
         ) : (

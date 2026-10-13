@@ -60,6 +60,7 @@ export function HomePage() {
           <EmptyState
             title="Failed to load patient records"
             description={error?.message || 'Check your network connection or session.'}
+            nextStep="Retry fetching directory or re-authenticate badge from top bar."
             action={{ label: 'Retry', onClick: () => refetch() }}
             icon={AlertCircle}
           />
@@ -69,6 +70,7 @@ export function HomePage() {
           <EmptyState
             title="No patients found"
             description="No patient records have been linked yet or directory is empty."
+            nextStep="Run ingestion pipeline from demo command center (⌘⇧D) or reset seed."
             icon={UserX}
           />
         </div>

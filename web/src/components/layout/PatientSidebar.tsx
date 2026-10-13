@@ -68,6 +68,7 @@ export function PatientSidebar({ onSelectPatient }: PatientSidebarProps) {
             <EmptyState
               title="Failed to load patients"
               description={error?.message || 'Check connection or backend authorization.'}
+              nextStep="Retry search query or re-authenticate user badge."
               action={{ label: 'Retry', onClick: () => refetch() }}
               icon={AlertCircle}
             />
@@ -77,6 +78,7 @@ export function PatientSidebar({ onSelectPatient }: PatientSidebarProps) {
             <EmptyState
               title="No patients found"
               description={searchTerm ? `No records matched "${searchTerm}".` : 'No patient records linked yet.'}
+              nextStep={searchTerm ? "Try searching by Master ID (CL-000001) or phone (90000 12345)." : "Check ingestion status."}
               icon={UserX}
             />
           </div>
@@ -91,10 +93,10 @@ export function PatientSidebar({ onSelectPatient }: PatientSidebarProps) {
               <button
                 key={patient.clid}
                 onClick={() => handlePatientClick(patient.clid)}
-                className={`w-full text-left rounded-[6px] border p-2.5 transition-all cursor-pointer ${
+                className={`w-full text-left rounded-[6px] border p-2.5 transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer shadow-2xs ${
                   isSelected
                     ? 'border-[var(--teal)] bg-[var(--paper)] ring-1 ring-[var(--teal)]'
-                    : 'border-[var(--line)] bg-[var(--surface)] hover:border-[var(--line)] hover:bg-[var(--paper)]'
+                    : 'border-[var(--line)] bg-[var(--surface)] hover:border-[var(--teal)]/40 hover:bg-[var(--paper)]'
                 }`}
               >
                 <div className="flex items-start justify-between gap-1">

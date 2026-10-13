@@ -286,7 +286,10 @@ export function usePatientsSearch(query: string) {
   })
 }
 
-export function usePatientSummary(clid: string | undefined) {
+export function usePatientSummary(
+  clid: string | undefined,
+  options?: { refetchInterval?: number | false }
+) {
   const token = useAuthStore((s) => s.token)
   const role = useAuthStore((s) => s.currentUser?.role)
 
@@ -294,13 +297,15 @@ export function usePatientSummary(clid: string | undefined) {
     queryKey: ['patient-summary', clid, role, token],
     queryFn: () => apiRequest<PatientSummaryData>(`/api/patients/${clid}/summary`),
     enabled: Boolean(clid),
-    staleTime: 5000,
+    staleTime: 2000,
+    refetchInterval: options?.refetchInterval ?? 3000,
   })
 }
 
 export function usePatientTimeline(
   clid: string | undefined,
-  filters?: { types?: string[]; sources?: string[]; from?: string; to?: string }
+  filters?: { types?: string[]; sources?: string[]; from?: string; to?: string },
+  options?: { refetchInterval?: number | false }
 ) {
   const token = useAuthStore((s) => s.token)
   const role = useAuthStore((s) => s.currentUser?.role)
@@ -320,7 +325,8 @@ export function usePatientTimeline(
         `/api/patients/${clid}/timeline${qs ? `?${qs}` : ''}`
       ),
     enabled: Boolean(clid),
-    staleTime: 5000,
+    staleTime: 2000,
+    refetchInterval: options?.refetchInterval ?? 3000,
   })
 }
 

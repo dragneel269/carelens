@@ -1,6 +1,8 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
+import { toast } from 'sonner'
 import {
   AlertTriangle,
   FileText,
@@ -39,6 +41,7 @@ import { ProvChip } from '../components/clinical/ProvChip'
 import { Redacted } from '../components/clinical/Redacted'
 import { SkeletonCard } from '../components/clinical/SkeletonCard'
 import { EmptyState } from '../components/clinical/EmptyState'
+import { CountUp } from '../components/clinical/CountUp'
 
 type ActiveTab = 'overview' | 'timeline' | 'identity'
 
@@ -167,8 +170,84 @@ export function PatientDetailPage() {
     refetch: refetchIdentity,
   } = usePatientIdentity(clid)
 
+  const shouldReduceMotion = useReducedMotion()
+  const prevSignatureRef = useRef<string | null>(null)
+  const isSwitchingRoleRef = useRef(false)
+
+  // Live updates detection: when patient revokes or grants consent, clinician or billing tab updates within 3s & shows toast "Access changed"
+  useEffect(() => {
+    if (!summary) return
+
+    const signature = JSON.stringify({
+      patient: isRestricted(summary.patient) ? summary.patient.reason : 'ok',
+      conditions: isRestricted(summary.active_conditions)
+        ? summary.active_conditions.reason
+        : Array.isArray(summary.active_conditions)
+        ? summary.active_conditions.length
+        : 0,
+      medications: isRestricted(summary.current_medications)
+        ? summary.current_medications.reason
+        : Array.isArray(summary.current_medications)
+        ? summary.current_medications.length
+        : 0,
+      allergies: isRestricted(summary.active_allergies)
+        ? summary.active_allergies.reason
+        : Array.isArray(summary.active_allergies)
+        ? summary.active_allergies.length
+        : 0,
+      labs: isRestricted(summary.lab_trends)
+        ? summary.lab_trends.reason
+        : Array.isArray(summary.lab_trends)
+        ? summary.lab_trends.length
+        : 0,
+      claims: isRestricted(summary.claims)
+        ? summary.claims.reason
+        : Array.isArray(summary.claims)
+        ? summary.claims.length
+        : 0,
+    })
+
+    if (prevSignatureRef.current !== null && prevSignatureRef.current !== signature) {
+      if (!isSwitchingRoleRef.current) {
+        toast.info("Access changed", {
+          description: "Patient consent directives or policy access permissions were updated in real time.",
+        })
+      }
+    }
+
+    prevSignatureRef.current = signature
+    isSwitchingRoleRef.current = false
+  }, [summary])
+
+  // Global keyboard shortcuts for patient chart tabs (1 = Overview, 2 = Timeline, 3 = Identity)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return
+      }
+
+      if (e.key === '1') {
+        setActiveTab('overview')
+      } else if (e.key === '2') {
+        setActiveTab('timeline')
+      } else if (e.key === '3') {
+        setActiveTab('identity')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   // Role Switch Handler
   const handleRoleChange = async (username: string) => {
+    isSwitchingRoleRef.current = true
     setIsSwitchingRole(true)
     try {
       await login(username)
@@ -184,9 +263,9 @@ export function PatientDetailPage() {
 
   if (isLoadingSummary && !summary) {
     return (
-      <div className="p-6 space-y-4 max-w-6xl mx-auto antialiased">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-4 max-w-6xl mx-auto antialiased">
         <SkeletonCard lines={3} />
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
           <SkeletonCard lines={5} />
           <SkeletonCard lines={5} />
         </div>
@@ -203,6 +282,7 @@ export function PatientDetailPage() {
             errorSummary?.message ||
             `Record for ${clid} could not be retrieved under your current policy role.`
           }
+          nextStep="Switch to a Clinician role above, or grant consent in the Patient Privacy Portal to unhide this section."
           action={{
             label: 'Retry',
             onClick: () => {
@@ -247,7 +327,7 @@ export function PatientDetailPage() {
       {/* Patient Header Banner (Spec §6 & Design System: Name in serif 28px, ID chips in mono, consent pill, Viewing-as switcher) */}
       <header
         data-testid="patient-banner"
-        className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-xs transition-colors"
+        className="rounded-[10px] border border-[var(--line)] border-l-4 border-l-[var(--primary)] bg-[var(--surface)] p-6 shadow-xs transition-colors"
       >
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5">
           {/* Left Column: Name, IDs, Consent, Demographics */}
@@ -259,44 +339,50 @@ export function PatientDetailPage() {
               </h1>
 
               {/* Master CLID chip in mono */}
-              <span className="rounded-[4px] border border-[var(--line)] bg-[var(--paper)] px-2 py-0.5 font-mono text-xs font-semibold text-[var(--ink)]">
+              <span className="rounded-[4px] border border-[var(--line)] bg-[var(--paper)] px-2.5 py-0.5 font-mono text-xs font-bold text-[var(--ink)]">
                 {clid}
               </span>
 
-              {/* Consent pill */}
+              {/* Consent status pill */}
               <span
                 data-testid="consent-pill"
-                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ok)]/30 bg-[var(--ok)]/10 px-2.5 py-0.5 font-mono text-xs font-medium text-[var(--ok)]"
+                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ok)]/40 bg-[var(--ok)]/15 px-3 py-0.5 font-mono text-xs font-bold text-[var(--ok)] shadow-2xs"
               >
-                <CheckCircle2 className="h-3 w-3 shrink-0" />
+                <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
                 <span>Consent: Treatment Active</span>
               </span>
             </div>
 
             {/* Linked feeder ID chips in mono */}
-            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-              <span className="font-mono text-[10px] text-[var(--ink-soft)] uppercase tracking-wider mr-1">
+            <div className="flex flex-wrap items-center gap-2 pt-0.5">
+              <span className="font-mono text-[10px] text-[var(--ink-soft)] uppercase tracking-wider mr-0.5 font-semibold">
                 Linked IDs:
               </span>
-              {linkedFeederIds.map((item, idx) => (
-                <span
-                  key={`${item.source}-${item.id}-${idx}`}
-                  className="inline-flex items-center gap-1 rounded-[4px] border border-[var(--line)] bg-[var(--paper)] px-2 py-0.5 font-mono text-[11px] text-[var(--ink-soft)]"
-                >
+              {linkedFeederIds.map((item, idx) => {
+                const borderColors = {
+                  ehr: 'border-[var(--source-ehr)]/40 bg-[var(--source-ehr)]/10 text-[var(--source-ehr)]',
+                  lab: 'border-[var(--source-lab)]/40 bg-[var(--source-lab)]/10 text-[var(--source-lab)]',
+                  pharmacy: 'border-[var(--source-pharmacy)]/40 bg-[var(--source-pharmacy)]/10 text-[var(--source-pharmacy)]',
+                  claims: 'border-[var(--source-claims)]/40 bg-[var(--source-claims)]/10 text-[var(--source-claims)]',
+                }[item.source] || 'border-[var(--line)] bg-[var(--paper)] text-[var(--ink)]'
+
+                const dotColors = {
+                  ehr: 'bg-[var(--source-ehr)]',
+                  lab: 'bg-[var(--source-lab)]',
+                  pharmacy: 'bg-[var(--source-pharmacy)]',
+                  claims: 'bg-[var(--source-claims)]',
+                }[item.source] || 'bg-[var(--ink-soft)]'
+
+                return (
                   <span
-                    className={`h-1.5 w-1.5 rounded-full ${
-                      item.source === 'ehr'
-                        ? 'bg-[var(--source-ehr)]'
-                        : item.source === 'lab'
-                        ? 'bg-[var(--source-lab)]'
-                        : item.source === 'pharmacy'
-                        ? 'bg-[var(--source-pharmacy)]'
-                        : 'bg-[var(--source-claims)]'
-                    }`}
-                  />
-                  <span className="text-[var(--ink)] font-medium">{item.id}</span>
-                </span>
-              ))}
+                    key={`${item.source}-${item.id}-${idx}`}
+                    className={`inline-flex items-center gap-1.5 rounded-[5px] border px-2.5 py-0.5 font-mono text-[11px] font-semibold ${borderColors}`}
+                  >
+                    <span className={`h-2 w-2 rounded-full ${dotColors}`} />
+                    <span className="text-[var(--ink)] font-bold">{item.id}</span>
+                  </span>
+                )
+              })}
             </div>
 
             {/* Demographics row with Redacted markers for non-clinical roles */}
@@ -428,597 +514,668 @@ export function PatientDetailPage() {
           <button
             onClick={() => setActiveTab('overview')}
             data-testid="tab-overview"
-            className={`flex items-center gap-1.5 rounded-[6px] px-3.5 py-1.5 font-sans text-xs font-medium transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 rounded-[6px] px-3.5 py-1.5 font-sans text-xs font-semibold transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer ${
               activeTab === 'overview'
-                ? 'bg-[var(--teal)] text-white'
+                ? 'bg-[var(--primary)] text-white shadow-xs'
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--paper)]'
             }`}
           >
             <FileText className="h-3.5 w-3.5" />
             <span>Overview</span>
+            <kbd className="hidden sm:inline-block ml-1 font-mono text-[9px] opacity-70">1</kbd>
           </button>
 
           <button
             onClick={() => setActiveTab('timeline')}
             data-testid="tab-timeline"
-            className={`flex items-center gap-1.5 rounded-[6px] px-3.5 py-1.5 font-sans text-xs font-medium transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 rounded-[6px] px-3.5 py-1.5 font-sans text-xs font-semibold transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer ${
               activeTab === 'timeline'
-                ? 'bg-[var(--teal)] text-white'
+                ? 'bg-[var(--primary)] text-white shadow-xs'
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--paper)]'
             }`}
           >
             <Clock className="h-3.5 w-3.5" />
             <span>Timeline</span>
+            <kbd className="hidden sm:inline-block ml-1 font-mono text-[9px] opacity-70">2</kbd>
           </button>
 
           <button
             onClick={() => setActiveTab('identity')}
             data-testid="tab-identity"
-            className={`flex items-center gap-1.5 rounded-[6px] px-3.5 py-1.5 font-sans text-xs font-medium transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 rounded-[6px] px-3.5 py-1.5 font-sans text-xs font-semibold transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer ${
               activeTab === 'identity'
-                ? 'bg-[var(--teal)] text-white'
+                ? 'bg-[var(--primary)] text-white shadow-xs'
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--paper)]'
             }`}
           >
             <Fingerprint className="h-3.5 w-3.5" />
             <span>Identity</span>
+            <kbd className="hidden sm:inline-block ml-1 font-mono text-[9px] opacity-70">3</kbd>
           </button>
         </nav>
       </header>
 
-      {/* TAB 1: OVERVIEW */}
-      {activeTab === 'overview' && (
-        <div data-testid="tab-overview-content" className="space-y-6">
-          {/* Row 1: Active Problems & Allergies */}
-          <div className="grid gap-6 md:grid-cols-2">
+      {/* Tab Content with Smooth Transitions */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
+          transition={{ duration: 0.18, ease: "easeInOut" }}
+        >
+          {/* TAB 1: OVERVIEW */}
+          {activeTab === 'overview' && (
+            <div data-testid="tab-overview-content" className="space-y-6">
+              {/* Row 1: Active Problems & Allergies */}
+              <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
             {/* Problems Card */}
             <section
               data-testid="card-problems"
-              className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-5 space-y-3"
+              className="rounded-[10px] border border-[var(--line)] border-l-4 border-l-[var(--source-ehr)] bg-[var(--surface)] overflow-hidden shadow-xs flex flex-col justify-between"
             >
-              <div className="flex items-center justify-between border-b border-[var(--line)] pb-2.5">
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-[var(--source-ehr)]" />
-                  <h2 className="font-serif text-base font-semibold text-[var(--ink)]">
-                    Active Problems
-                  </h2>
-                </div>
-                <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--source-ehr)]">
-                  EHR Conditions
-                </span>
-              </div>
-
-              {isRestricted(summary.active_conditions) ? (
-                <div
-                  data-testid="problems-redacted"
-                  className="p-4 bg-[var(--paper)] rounded-[6px] border border-[var(--line)] space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <Redacted
-                      animKey={roleKey}
-                      reason={summary.active_conditions.reason}
-                      width="w-48"
-                    />
-                    <Redacted
-                      animKey={roleKey}
-                      reason={summary.active_conditions.reason}
-                      width="w-20"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Redacted
-                      animKey={roleKey}
-                      reason={summary.active_conditions.reason}
-                      width="w-40"
-                    />
-                    <Redacted
-                      animKey={roleKey}
-                      reason={summary.active_conditions.reason}
-                      width="w-20"
-                    />
-                  </div>
-                  <p className="font-mono text-[11px] text-[var(--ink-soft)] pt-1">
-                    {summary.active_conditions.reason}
-                  </p>
-                </div>
-              ) : summary.active_conditions.length === 0 ? (
-                <p className="text-xs text-[var(--ink-soft)] p-3">No active conditions recorded.</p>
-              ) : (
-                <div className="space-y-2">
-                  {summary.active_conditions.map((c, idx) => (
-                    <div
-                      key={c.id || idx}
-                      className="flex items-center justify-between rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-2.5 text-xs"
-                    >
-                      <div>
-                        <span className="font-medium text-[var(--ink)] block">
-                          {c.display || c.condition_name || 'Condition'}
+              <div>
+                <div className="flex items-center justify-between border-b border-[var(--source-ehr)]/25 bg-[var(--source-ehr)]/10 px-5 py-3">
+                  <div className="flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-[var(--source-ehr)]" />
+                    <h2 className="font-serif text-base font-semibold text-[var(--ink)]">
+                      Active Problems
+                      {Array.isArray(summary.active_conditions) && (
+                        <span className="ml-1.5 font-mono text-xs font-bold text-[var(--source-ehr)]">
+                          (<CountUp value={summary.active_conditions.length} />)
                         </span>
-                        {(c.code || c.icd10_code) && (
-                          <span className="font-mono text-[10px] text-[var(--ink-soft)]">
-                            Code: {c.code || c.icd10_code}
-                          </span>
-                        )}
-                      </div>
-                      <ProvChip
-                        source={(c.source || 'ehr') as RecordSource}
-                        timestamp={c.recorded_at}
-                      />
-                    </div>
-                  ))}
+                      )}
+                    </h2>
+                  </div>
+                  <span className="font-mono text-[10px] uppercase font-bold tracking-wider text-[var(--source-ehr)]">
+                    EHR Conditions
+                  </span>
                 </div>
-              )}
+
+                <div className="p-5 space-y-3">
+                  {isRestricted(summary.active_conditions) ? (
+                    <div
+                      data-testid="problems-redacted"
+                      className="p-4 bg-[var(--paper)] rounded-[6px] border border-[var(--line)] space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <Redacted
+                          animKey={roleKey}
+                          reason={summary.active_conditions.reason}
+                          width="w-48"
+                        />
+                        <Redacted
+                          animKey={roleKey}
+                          reason={summary.active_conditions.reason}
+                          width="w-20"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Redacted
+                          animKey={roleKey}
+                          reason={summary.active_conditions.reason}
+                          width="w-40"
+                        />
+                        <Redacted
+                          animKey={roleKey}
+                          reason={summary.active_conditions.reason}
+                          width="w-20"
+                        />
+                      </div>
+                      <p className="font-mono text-[11px] text-[var(--ink-soft)] pt-1">
+                        {summary.active_conditions.reason}
+                      </p>
+                    </div>
+                  ) : summary.active_conditions.length === 0 ? (
+                    <EmptyState
+                      title="No active conditions recorded"
+                      description="No clinical diagnoses or documented health problems found in EHR feeder records."
+                      nextStep="Reconcile problem list with primary physician encounter."
+                    />
+                  ) : (
+                    <div className="space-y-2">
+                      {summary.active_conditions.map((c, idx) => (
+                        <div
+                          key={c.id || idx}
+                          className="flex items-center justify-between rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-2.5 text-xs transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 hover:border-[var(--source-ehr)]/40 shadow-2xs"
+                        >
+                          <div>
+                            <span className="font-medium text-[var(--ink)] block">
+                              {c.display || c.condition_name || 'Condition'}
+                            </span>
+                            {(c.code || c.icd10_code) && (
+                              <span className="font-mono text-[10px] text-[var(--ink-soft)]">
+                                Code: {c.code || c.icd10_code}
+                              </span>
+                            )}
+                          </div>
+                          <ProvChip
+                            source={(c.source || 'ehr') as RecordSource}
+                            timestamp={c.recorded_at}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </section>
 
             {/* Allergies Card */}
             <section
               data-testid="card-allergies"
-              className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-5 space-y-3"
+              className="rounded-[10px] border border-[var(--line)] border-l-4 border-l-[var(--alert)] bg-[var(--surface)] overflow-hidden shadow-xs flex flex-col justify-between"
             >
-              <div className="flex items-center justify-between border-b border-[var(--line)] pb-2.5">
-                <div className="flex items-center gap-2">
-                  <ShieldAlert className="h-4 w-4 text-[var(--alert-vermilion)]" />
-                  <h2 className="font-serif text-base font-semibold text-[var(--ink)]">
-                    Documented Allergies
-                  </h2>
-                </div>
-                <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--alert-vermilion)]">
-                  Immuno Alerts
-                </span>
-              </div>
-
-              {isRestricted(summary.active_allergies) ? (
-                <div
-                  data-testid="allergies-redacted"
-                  className="p-4 bg-[var(--paper)] rounded-[6px] border border-[var(--line)] space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <Redacted
-                      animKey={roleKey}
-                      reason={summary.active_allergies.reason}
-                      width="w-44"
-                    />
-                    <Redacted
-                      animKey={roleKey}
-                      reason={summary.active_allergies.reason}
-                      width="w-20"
-                    />
+              <div>
+                <div className="flex items-center justify-between border-b border-[var(--alert)]/25 bg-[var(--alert)]/10 px-5 py-3">
+                  <div className="flex items-center gap-2">
+                    <ShieldAlert className="h-4 w-4 text-[var(--alert)]" />
+                    <h2 className="font-serif text-base font-semibold text-[var(--ink)]">
+                      Documented Allergies
+                      {Array.isArray(summary.active_allergies) && (
+                        <span className="ml-1.5 font-mono text-xs font-bold text-[var(--alert)]">
+                          (<CountUp value={summary.active_allergies.length} />)
+                        </span>
+                      )}
+                    </h2>
                   </div>
-                  <p className="font-mono text-[11px] text-[var(--ink-soft)] pt-1">
-                    {summary.active_allergies.reason}
-                  </p>
+                  <span className="font-mono text-[10px] uppercase font-bold tracking-wider text-[var(--alert)]">
+                    Immuno Alerts
+                  </span>
                 </div>
-              ) : summary.active_allergies.length === 0 ? (
-                <p className="text-xs text-[var(--ink-soft)] p-3">No documented allergies on record.</p>
-              ) : (
-                <div className="space-y-2">
-                  {summary.active_allergies.map((a, idx) => (
+
+                <div className="p-5 space-y-3">
+                  {isRestricted(summary.active_allergies) ? (
                     <div
-                      key={a.id || idx}
-                      className="flex items-center justify-between rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-2.5 text-xs"
+                      data-testid="allergies-redacted"
+                      className="p-4 bg-[var(--paper)] rounded-[6px] border border-[var(--line)] space-y-2"
                     >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-[var(--alert-vermilion)]">
-                            {a.substance}
-                          </span>
-                          <span className="rounded bg-[var(--alert-vermilion)]/10 px-1.5 py-0.2 font-mono text-[10px] text-[var(--alert-vermilion)] uppercase font-semibold">
-                            {a.criticality || a.severity || 'High'}
-                          </span>
-                        </div>
-                        {a.reaction && (
-                          <span className="font-mono text-[10px] text-[var(--ink-soft)] block">
-                            Reaction: {a.reaction}
-                          </span>
-                        )}
+                      <div className="flex items-center justify-between">
+                        <Redacted
+                          animKey={roleKey}
+                          reason={summary.active_allergies.reason}
+                          width="w-44"
+                        />
+                        <Redacted
+                          animKey={roleKey}
+                          reason={summary.active_allergies.reason}
+                          width="w-20"
+                        />
                       </div>
-                      <ProvChip
-                        source={(a.source || 'ehr') as RecordSource}
-                        timestamp={a.recorded_at}
-                      />
+                      <p className="font-mono text-[11px] text-[var(--ink-soft)] pt-1">
+                        {summary.active_allergies.reason}
+                      </p>
                     </div>
-                  ))}
+                  ) : summary.active_allergies.length === 0 ? (
+                    <EmptyState
+                      title="No documented allergies"
+                      description="No adverse drug, food, or environmental allergies recorded on file."
+                      nextStep="Confirm allergy profile with patient during clinical triage."
+                    />
+                  ) : (
+                    <div className="space-y-2">
+                      {summary.active_allergies.map((a, idx) => (
+                        <div
+                          key={a.id || idx}
+                          className="flex items-center justify-between rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-2.5 text-xs transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 hover:border-[var(--alert)]/40 shadow-2xs"
+                        >
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-[var(--alert)]">
+                                {a.substance}
+                              </span>
+                              <span className="rounded bg-[var(--alert)]/15 px-2 py-0.5 font-mono text-[10px] text-[var(--alert)] uppercase font-bold border border-[var(--alert)]/30">
+                                {a.criticality || a.severity || 'High'}
+                              </span>
+                            </div>
+                            {a.reaction && (
+                              <span className="font-mono text-[10px] text-[var(--ink-soft)] block">
+                                Reaction: {a.reaction}
+                              </span>
+                            )}
+                          </div>
+                          <ProvChip
+                            source={(a.source || 'ehr') as RecordSource}
+                            timestamp={a.recorded_at}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </section>
           </div>
 
           {/* Row 2: Merged Medications Card with Conflict Flags */}
           <section
             data-testid="card-medications"
-            className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-5 space-y-3"
+            className="rounded-[10px] border border-[var(--line)] border-l-4 border-l-[var(--source-pharmacy)] bg-[var(--surface)] overflow-hidden shadow-xs space-y-0"
           >
-            <div className="flex items-center justify-between border-b border-[var(--line)] pb-2.5">
+            <div className="flex items-center justify-between border-b border-[var(--source-pharmacy)]/25 bg-[var(--source-pharmacy)]/10 px-5 py-3">
               <div className="flex items-center gap-2">
                 <Pill className="h-4 w-4 text-[var(--source-pharmacy)]" />
                 <div>
                   <h2 className="font-serif text-base font-semibold text-[var(--ink)]">
                     Reconciled Current Medications
+                    {Array.isArray(summary.current_medications) && (
+                      <span className="ml-1.5 font-mono text-xs font-bold text-[var(--source-pharmacy)]">
+                        (<CountUp value={summary.current_medications.length} />)
+                      </span>
+                    )}
                   </h2>
                   <p className="text-[11px] text-[var(--ink-soft)]">
                     Cross-referenced between EHR prescribed and Pharmacy dispensed records.
                   </p>
                 </div>
               </div>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--source-pharmacy)]">
+              <span className="font-mono text-[10px] uppercase font-bold tracking-wider text-[var(--source-pharmacy)]">
                 Pharmacy + EHR
               </span>
             </div>
 
-            {isRestricted(summary.current_medications) ? (
-              <div
-                data-testid="medications-redacted"
-                className="p-4 bg-[var(--paper)] rounded-[6px] border border-[var(--line)] space-y-2"
-              >
-                <div className="flex items-center justify-between">
-                  <Redacted
-                    animKey={roleKey}
-                    reason={summary.current_medications.reason}
-                    width="w-56"
-                  />
-                  <Redacted
-                    animKey={roleKey}
-                    reason={summary.current_medications.reason}
-                    width="w-20"
-                  />
+            <div className="p-5 space-y-3">
+              {isRestricted(summary.current_medications) ? (
+                <div
+                  data-testid="medications-redacted"
+                  className="p-4 bg-[var(--paper)] rounded-[6px] border border-[var(--line)] space-y-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <Redacted
+                      animKey={roleKey}
+                      reason={summary.current_medications.reason}
+                      width="w-56"
+                    />
+                    <Redacted
+                      animKey={roleKey}
+                      reason={summary.current_medications.reason}
+                      width="w-20"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Redacted
+                      animKey={roleKey}
+                      reason={summary.current_medications.reason}
+                      width="w-48"
+                    />
+                    <Redacted
+                      animKey={roleKey}
+                      reason={summary.current_medications.reason}
+                      width="w-20"
+                    />
+                  </div>
+                  <p className="font-mono text-[11px] text-[var(--ink-soft)] pt-1">
+                    {summary.current_medications.reason}
+                  </p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <Redacted
-                    animKey={roleKey}
-                    reason={summary.current_medications.reason}
-                    width="w-48"
-                  />
-                  <Redacted
-                    animKey={roleKey}
-                    reason={summary.current_medications.reason}
-                    width="w-20"
-                  />
-                </div>
-                <p className="font-mono text-[11px] text-[var(--ink-soft)] pt-1">
-                  {summary.current_medications.reason}
-                </p>
-              </div>
-            ) : summary.current_medications.length === 0 ? (
-              <p className="text-xs text-[var(--ink-soft)] p-3">No active medications found.</p>
-            ) : (
-              <div className="space-y-2.5">
-                {summary.current_medications.map((m, idx) => {
-                  const primarySource =
-                    (m.sources && m.sources[0]) || m.source || (m.pharmacy_dispensed ? 'pharmacy' : 'ehr')
+              ) : summary.current_medications.length === 0 ? (
+                <EmptyState
+                  title="No active medications found"
+                  description="No current prescription dispensations or pharmacy records on file."
+                  nextStep="Check retail pharmacy or outpatient prescription order."
+                />
+              ) : (
+                <div className="space-y-2.5">
+                  {summary.current_medications.map((m, idx) => {
+                    const primarySource =
+                      (m.sources && m.sources[0]) || m.source || (m.pharmacy_dispensed ? 'pharmacy' : 'ehr')
 
-                  return (
-                    <div
-                      key={idx}
-                      data-testid={`medication-row-${idx}`}
-                      className={`rounded-[8px] border p-3 text-xs transition-all ${
-                        m.has_conflict
-                          ? 'border-[var(--alert-vermilion)]/60 bg-[var(--alert-vermilion)]/5'
-                          : 'border-[var(--line)] bg-[var(--paper)]'
-                      }`}
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="space-y-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="font-serif font-bold text-sm text-[var(--ink)]">
-                              {m.generic_name}
-                            </span>
-                            {m.brand_name && (
-                              <span className="rounded-[4px] border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.2 font-mono text-[10px] text-[var(--ink-soft)]">
-                                Brand: {m.brand_name}
+                    return (
+                      <div
+                        key={idx}
+                        data-testid={`medication-row-${idx}`}
+                        className={`rounded-[8px] border p-3 text-xs transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 shadow-2xs ${
+                          m.has_conflict
+                            ? 'border-[var(--alert)]/60 bg-[var(--alert)]/5'
+                            : 'border-[var(--line)] bg-[var(--paper)]'
+                        }`}
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="font-serif font-bold text-sm text-[var(--ink)]">
+                                {m.generic_name}
                               </span>
-                            )}
-                            {(m.dosage || m.dose) && (
-                              <span className="font-mono text-[11px] text-[var(--ink-soft)]">
-                                ({m.dosage || m.dose})
-                              </span>
-                            )}
-                            {/* Sources tags */}
-                            {m.sources && (
-                              <span className="font-mono text-[10px] text-[var(--ink-soft)]">
-                                [{m.sources.join(', ')}]
-                              </span>
+                              {m.brand_name && (
+                                <span className="rounded-[4px] border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.2 font-mono text-[10px] text-[var(--ink-soft)]">
+                                  Brand: {m.brand_name}
+                                </span>
+                              )}
+                              {(m.dosage || m.dose) && (
+                                <span className="font-mono text-[11px] text-[var(--ink-soft)]">
+                                  ({m.dosage || m.dose})
+                                </span>
+                              )}
+                              {/* Sources tags */}
+                              {m.sources && (
+                                <span className="font-mono text-[10px] text-[var(--ink-soft)]">
+                                  [{m.sources.join(', ')}]
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Conflict Alert Banner */}
+                            {m.has_conflict && (
+                              <div
+                                data-testid="conflict-warning"
+                                className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-[var(--alert)]"
+                              >
+                                <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                                <span>
+                                  {m.conflict_type === 'allergy_conflict'
+                                    ? 'ALLERGY CONFLICT: Dispensed despite documented penicillin allergy!'
+                                    : m.conflict_type === 'missing_from_ehr'
+                                    ? 'DISCREPANCY: Dispensed by pharmacy but missing from hospital EHR!'
+                                    : m.conflict_detail || 'DISCREPANCY FLAGGED'}
+                                </span>
+                              </div>
                             )}
                           </div>
 
-                          {/* Conflict Alert Banner */}
-                          {m.has_conflict && (
-                            <div
-                              data-testid="conflict-warning"
-                              className="flex items-center gap-1.5 font-mono text-[11px] font-semibold text-[var(--alert-vermilion)]"
-                            >
-                              <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                              <span>
-                                {m.conflict_type === 'allergy_conflict'
-                                  ? 'ALLERGY CONFLICT: Dispensed despite documented penicillin allergy!'
-                                  : m.conflict_type === 'missing_from_ehr'
-                                  ? 'DISCREPANCY: Dispensed by pharmacy but missing from hospital EHR!'
-                                  : m.conflict_detail || 'DISCREPANCY FLAGGED'}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* ProvChip */}
-                        <div className="shrink-0 self-start sm:self-auto">
-                          <ProvChip
-                            source={primarySource as RecordSource}
-                            timestamp={m.recorded_at}
-                          />
+                          {/* ProvChip */}
+                          <div className="shrink-0 self-start sm:self-auto">
+                            <ProvChip
+                              source={primarySource as RecordSource}
+                              timestamp={m.recorded_at}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </section>
 
-          {/* Row 3: Latest Labs Card with Recharts Trend Line & Reference Band */}
+          {/* Row 3: Latest Labs Card with Recharts Trend Line & Vivid Reference Band */}
           <section
             data-testid="card-labs"
-            className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-5 space-y-4"
+            className="rounded-[10px] border border-[var(--line)] border-l-4 border-l-[var(--source-lab)] bg-[var(--surface)] overflow-hidden shadow-xs space-y-0"
           >
-            <div className="flex items-center justify-between border-b border-[var(--line)] pb-2.5">
+            <div className="flex items-center justify-between border-b border-[var(--source-lab)]/25 bg-[var(--source-lab)]/10 px-5 py-3">
               <div className="flex items-center gap-2">
                 <Building2 className="h-4 w-4 text-[var(--source-lab)]" />
                 <div>
                   <h2 className="font-serif text-base font-semibold text-[var(--ink)]">
                     Latest Labs & Longitudinal Trends
+                    {Array.isArray(summary.lab_trends) && (
+                      <span className="ml-1.5 font-mono text-xs font-bold text-[var(--source-lab)]">
+                        (<CountUp value={summary.lab_trends.length} />)
+                      </span>
+                    )}
                   </h2>
                   <p className="text-[11px] text-[var(--ink-soft)]">
-                    Unified observations with Recharts trendline, normal reference bands, and LOINC codes.
+                    Unified observations with Recharts trendline, vivid normal reference bands, and LOINC codes.
                   </p>
                 </div>
               </div>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--source-lab)]">
+              <span className="font-mono text-[10px] uppercase font-bold tracking-wider text-[var(--source-lab)]">
                 Normalized LOINC
               </span>
             </div>
 
-            {isRestricted(summary.lab_trends) ? (
-              <div
-                data-testid="labs-redacted"
-                className="p-4 bg-[var(--paper)] rounded-[6px] border border-[var(--line)] space-y-2"
-              >
-                <div className="flex items-center justify-between">
-                  <Redacted animKey={roleKey} reason={summary.lab_trends.reason} width="w-52" />
-                  <Redacted animKey={roleKey} reason={summary.lab_trends.reason} width="w-24" />
+            <div className="p-5 space-y-4">
+              {isRestricted(summary.lab_trends) ? (
+                <div
+                  data-testid="labs-redacted"
+                  className="p-4 bg-[var(--paper)] rounded-[6px] border border-[var(--line)] space-y-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <Redacted animKey={roleKey} reason={summary.lab_trends.reason} width="w-52" />
+                    <Redacted animKey={roleKey} reason={summary.lab_trends.reason} width="w-24" />
+                  </div>
+                  <div className="h-16 w-full rounded border border-[var(--line)] bg-[var(--surface)] flex items-center justify-center">
+                    <Redacted animKey={roleKey} reason={summary.lab_trends.reason} width="w-64" />
+                  </div>
+                  <p className="font-mono text-[11px] text-[var(--ink-soft)] pt-1">
+                    {summary.lab_trends.reason}
+                  </p>
                 </div>
-                <div className="h-16 w-full rounded border border-[var(--line)] bg-[var(--surface)] flex items-center justify-center">
-                  <Redacted animKey={roleKey} reason={summary.lab_trends.reason} width="w-64" />
-                </div>
-                <p className="font-mono text-[11px] text-[var(--ink-soft)] pt-1">
-                  {summary.lab_trends.reason}
-                </p>
-              </div>
-            ) : summary.lab_trends.length === 0 ? (
-              <p className="text-xs text-[var(--ink-soft)] p-3">No laboratory observations found.</p>
-            ) : (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {summary.lab_trends.map((t, idx) => {
-                  const currentValue = t.current_value ?? t.latest_value ?? 0
-                  const testDate = t.recorded_at || t.latest_date || new Date().toISOString()
-                  const refRange = getLabRefRange(t.test_name, t.loinc_code)
+              ) : summary.lab_trends.length === 0 ? (
+                <EmptyState
+                  title="No laboratory observations found"
+                  description="Diagnostic biochemistry and clinical pathology reports will appear here once specimens are processed."
+                  nextStep="Order diagnostic laboratory panel from hospital requisition."
+                />
+              ) : (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {summary.lab_trends.map((t, idx) => {
+                    const currentValue = t.current_value ?? t.latest_value ?? 0
+                    const testDate = t.recorded_at || t.latest_date || new Date().toISOString()
+                    const refRange = getLabRefRange(t.test_name, t.loinc_code)
 
-                  // Format trend points for Recharts
-                  const chartData = (t.trend || []).map((pt, pIdx) => ({
-                    index: pIdx,
-                    date: (pt.recorded_at || pt.date || '').split('T')[0],
-                    value: pt.value,
-                    unit: pt.unit || t.unit,
-                  }))
+                    // Format trend points for Recharts
+                    const chartData = (t.trend || []).map((pt, pIdx) => ({
+                      index: pIdx,
+                      date: (pt.recorded_at || pt.date || '').split('T')[0],
+                      value: pt.value,
+                      unit: pt.unit || t.unit,
+                    }))
 
-                  return (
-                    <div
-                      key={idx}
-                      data-testid={`lab-card-${idx}`}
-                      className="rounded-[8px] border border-[var(--line)] bg-[var(--paper)] p-3.5 space-y-2.5 flex flex-col justify-between"
-                    >
-                      {/* Test Header */}
-                      <div className="space-y-1">
-                        <div className="flex items-start justify-between gap-1">
-                          <div>
-                            <span className="font-serif font-semibold text-xs text-[var(--ink)] block">
-                              {t.test_name}
-                            </span>
-                            {t.loinc_code && (
-                              <span className="font-mono text-[10px] text-[var(--ink-soft)]">
-                                LOINC: {t.loinc_code}
+                    return (
+                      <div
+                        key={idx}
+                        data-testid={`lab-card-${idx}`}
+                        className="rounded-[8px] border border-[var(--line)] bg-[var(--paper)] p-3.5 space-y-2.5 flex flex-col justify-between transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 hover:border-[var(--source-lab)]/40 shadow-2xs"
+                      >
+                        {/* Test Header */}
+                        <div className="space-y-1">
+                          <div className="flex items-start justify-between gap-1">
+                            <div>
+                              <span className="font-serif font-semibold text-xs text-[var(--ink)] block">
+                                {t.test_name}
                               </span>
+                              {t.loinc_code && (
+                                <span className="font-mono text-[10px] text-[var(--ink-soft)]">
+                                  LOINC: {t.loinc_code}
+                                </span>
+                              )}
+                            </div>
+                            <span
+                              className={`rounded px-2 py-0.5 font-mono text-[10px] font-bold uppercase border ${
+                                t.flag && t.flag !== 'NORMAL'
+                                  ? 'bg-[var(--alert)]/15 text-[var(--alert)] border-[var(--alert)]/30'
+                                  : 'bg-[var(--ok)]/15 text-[var(--ok)] border-[var(--ok)]/30'
+                              }`}
+                            >
+                              {t.flag || 'Normal'}
+                            </span>
+                          </div>
+
+                          {/* Current Value in Mono Tabular with CountUp */}
+                          <div className="flex items-baseline gap-1.5 pt-1">
+                            <span className="font-mono text-2xl font-bold tabular-nums text-[var(--ink)]">
+                              <CountUp value={currentValue} decimals={typeof currentValue === 'number' && currentValue % 1 !== 0 ? 1 : 0} />
+                            </span>
+                            <span className="font-mono text-xs text-[var(--ink-soft)]">
+                              {t.unit}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Recharts Trend Line and Vivid Reference Band */}
+                        {chartData.length > 0 && (
+                          <div className="pt-1 pb-1">
+                            <div className="h-[70px] w-full">
+                              <ResponsiveContainer width="100%" height={70}>
+                                <LineChart
+                                  data={chartData}
+                                  margin={{ top: 5, right: 8, bottom: 5, left: 8 }}
+                                >
+                                  {refRange && (
+                                    <ReferenceArea
+                                      y1={refRange.min}
+                                      y2={refRange.max}
+                                      fill="var(--ok)"
+                                      fillOpacity={0.25}
+                                      stroke="var(--ok)"
+                                      strokeOpacity={0.8}
+                                      strokeDasharray="3 3"
+                                    />
+                                  )}
+                                  <Tooltip
+                                    content={({ active, payload }) => {
+                                      if (active && payload && payload.length) {
+                                        const p = payload[0].payload
+                                        return (
+                                          <div className="rounded-[4px] border border-[var(--line)] bg-[var(--surface)] p-1.5 shadow-sm text-[10px] font-mono">
+                                            <span className="text-[var(--ink-soft)] block">
+                                              {p.date}
+                                            </span>
+                                            <span className="font-bold text-[var(--ink)]">
+                                              {p.value} {t.unit}
+                                            </span>
+                                          </div>
+                                        )
+                                      }
+                                      return null
+                                    }}
+                                  />
+                                  <Line
+                                    type="monotone"
+                                    dataKey="value"
+                                    stroke="var(--primary)"
+                                    strokeWidth={2.5}
+                                    dot={{
+                                      r: 2.5,
+                                      fill: 'var(--primary)',
+                                      stroke: 'var(--surface)',
+                                      strokeWidth: 1,
+                                    }}
+                                    activeDot={{ r: 4, fill: 'var(--primary-strong)' }}
+                                    isAnimationActive={false}
+                                  />
+                                </LineChart>
+                              </ResponsiveContainer>
+                            </div>
+                            {refRange && (
+                              <div className="font-mono text-[9px] text-[var(--ink-soft)] text-right">
+                                {refRange.label}
+                              </div>
                             )}
                           </div>
-                          <span
-                            className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase ${
-                              t.flag && t.flag !== 'NORMAL'
-                                ? 'bg-[var(--alert-vermilion)]/10 text-[var(--alert-vermilion)]'
-                                : 'bg-[var(--ok)]/10 text-[var(--ok)]'
-                            }`}
-                          >
-                            {t.flag || 'Normal'}
-                          </span>
-                        </div>
+                        )}
 
-                        {/* Current Value in Mono Tabular */}
-                        <div className="flex items-baseline gap-1.5 pt-1">
-                          <span className="font-mono text-2xl font-bold tabular-nums text-[var(--ink)]">
-                            {currentValue}
+                        {/* Card Footer with ProvChip */}
+                        <div className="pt-2 border-t border-[var(--line)] flex items-center justify-between text-[10px]">
+                          <span className="font-mono text-[10px] text-[var(--ink-soft)]">
+                            {chartData.length} pts series
                           </span>
-                          <span className="font-mono text-xs text-[var(--ink-soft)]">
-                            {t.unit}
-                          </span>
+                          <ProvChip
+                            source={(t.source || 'lab') as RecordSource}
+                            timestamp={testDate}
+                          />
                         </div>
                       </div>
-
-                      {/* Recharts Trend Line and Reference Band */}
-                      {chartData.length > 0 && (
-                        <div className="pt-1 pb-1">
-                          <div className="h-[70px] w-full">
-                            <ResponsiveContainer width="100%" height={70}>
-                              <LineChart
-                                data={chartData}
-                                margin={{ top: 5, right: 8, bottom: 5, left: 8 }}
-                              >
-                                {refRange && (
-                                  <ReferenceArea
-                                    y1={refRange.min}
-                                    y2={refRange.max}
-                                    fill="var(--ok)"
-                                    fillOpacity={0.12}
-                                    stroke="var(--ok)"
-                                    strokeOpacity={0.25}
-                                    strokeDasharray="2 2"
-                                  />
-                                )}
-                                <Tooltip
-                                  content={({ active, payload }) => {
-                                    if (active && payload && payload.length) {
-                                      const p = payload[0].payload
-                                      return (
-                                        <div className="rounded-[4px] border border-[var(--line)] bg-[var(--surface)] p-1.5 shadow-sm text-[10px] font-mono">
-                                          <span className="text-[var(--ink-soft)] block">
-                                            {p.date}
-                                          </span>
-                                          <span className="font-bold text-[var(--ink)]">
-                                            {p.value} {t.unit}
-                                          </span>
-                                        </div>
-                                      )
-                                    }
-                                    return null
-                                  }}
-                                />
-                                <Line
-                                  type="monotone"
-                                  dataKey="value"
-                                  stroke="var(--teal)"
-                                  strokeWidth={2}
-                                  dot={{
-                                    r: 2.5,
-                                    fill: 'var(--teal)',
-                                    stroke: 'var(--surface)',
-                                    strokeWidth: 1,
-                                  }}
-                                  activeDot={{ r: 4, fill: 'var(--teal)' }}
-                                  isAnimationActive={false}
-                                />
-                              </LineChart>
-                            </ResponsiveContainer>
-                          </div>
-                          {refRange && (
-                            <div className="font-mono text-[9px] text-[var(--ink-soft)] text-right">
-                              {refRange.label}
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Card Footer with ProvChip */}
-                      <div className="pt-2 border-t border-[var(--line)] flex items-center justify-between text-[10px]">
-                        <span className="font-mono text-[10px] text-[var(--ink-soft)]">
-                          {chartData.length} pts series
-                        </span>
-                        <ProvChip
-                          source={(t.source || 'lab') as RecordSource}
-                          timestamp={testDate}
-                        />
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </section>
 
           {/* Row 4: Claims Status Card */}
           <section
             data-testid="card-claims"
-            className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-5 space-y-3"
+            className="rounded-[10px] border border-[var(--line)] border-l-4 border-l-[var(--source-claims)] bg-[var(--surface)] overflow-hidden shadow-xs space-y-0"
           >
-            <div className="flex items-center justify-between border-b border-[var(--line)] pb-2.5">
+            <div className="flex items-center justify-between border-b border-[var(--source-claims)]/25 bg-[var(--source-claims)]/10 px-5 py-3">
               <div className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-[var(--source-claims)]" />
                 <div>
                   <h2 className="font-serif text-base font-semibold text-[var(--ink)]">
                     Insurance Claims Status
+                    {Array.isArray(summary.claims) && (
+                      <span className="ml-1.5 font-mono text-xs font-bold text-[var(--source-claims)]">
+                        (<CountUp value={summary.claims.length} />)
+                      </span>
+                    )}
                   </h2>
                   <p className="text-[11px] text-[var(--ink-soft)]">
                     Insurer billing ledger, status tracking, and reimbursement values.
                   </p>
                 </div>
               </div>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--source-claims)]">
+              <span className="font-mono text-[10px] uppercase font-bold tracking-wider text-[var(--source-claims)]">
                 Insurer Claims
               </span>
             </div>
 
-            {isRestricted(summary.claims) ? (
-              <div
-                data-testid="claims-redacted"
-                className="p-4 bg-[var(--paper)] rounded-[6px] border border-[var(--line)] space-y-2"
-              >
-                <div className="flex items-center justify-between">
-                  <Redacted animKey={roleKey} reason={summary.claims.reason} width="w-48" />
-                  <Redacted animKey={roleKey} reason={summary.claims.reason} width="w-20" />
+            <div className="p-5 space-y-3">
+              {isRestricted(summary.claims) ? (
+                <div
+                  data-testid="claims-redacted"
+                  className="p-4 bg-[var(--paper)] rounded-[6px] border border-[var(--line)] space-y-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <Redacted animKey={roleKey} reason={summary.claims.reason} width="w-48" />
+                    <Redacted animKey={roleKey} reason={summary.claims.reason} width="w-20" />
+                  </div>
+                  <p className="font-mono text-[11px] text-[var(--ink-soft)] pt-1">
+                    {summary.claims.reason}
+                  </p>
                 </div>
-                <p className="font-mono text-[11px] text-[var(--ink-soft)] pt-1">
-                  {summary.claims.reason}
-                </p>
-              </div>
-            ) : summary.claims.length === 0 ? (
-              <p className="text-xs text-[var(--ink-soft)] p-3">No insurance claims on record.</p>
-            ) : (
-              <div className="space-y-2">
-                {summary.claims.map((cl, idx) => {
-                  const claimId = cl.claim_id || (typeof cl.id === 'string' ? cl.id : `CLM-${cl.id}`)
-                  const amount = cl.total_amount ?? cl.claimed_amount ?? 0
-                  const date = cl.service_date || cl.recorded_at || new Date().toISOString()
+              ) : summary.claims.length === 0 ? (
+                <EmptyState
+                  title="No insurance claims on record"
+                  description="No insurance claims, pre-authorizations, or cashless settlement records found with payer."
+                  nextStep="Submit pre-authorization claim to insurer via TPA portal."
+                />
+              ) : (
+                <div className="space-y-2">
+                  {summary.claims.map((cl, idx) => {
+                    const claimId = cl.claim_id || (typeof cl.id === 'string' ? cl.id : `CLM-${cl.id}`)
+                    const amount = cl.total_amount ?? cl.claimed_amount ?? 0
+                    const date = cl.service_date || cl.recorded_at || new Date().toISOString()
 
-                  return (
-                    <div
-                      key={idx}
-                      data-testid={`claim-row-${idx}`}
-                      className="rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-3 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono font-semibold text-[var(--ink)]">
-                            {claimId}
-                          </span>
-                          <span
-                            className={`rounded px-1.5 py-0.2 font-mono text-[10px] uppercase font-medium ${
-                              cl.status === 'approved'
-                                ? 'bg-[var(--ok)]/10 text-[var(--ok)]'
-                                : 'bg-[var(--alert-vermilion)]/10 text-[var(--alert-vermilion)]'
-                            }`}
-                          >
-                            {cl.status}
-                          </span>
-                          {cl.category && (
-                            <span className="rounded bg-[var(--surface)] px-1.5 py-0.2 font-mono text-[10px] text-[var(--ink-soft)] border border-[var(--line)]">
-                              {cl.category}
+                    return (
+                      <div
+                        key={idx}
+                        data-testid={`claim-row-${idx}`}
+                        className="rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-3 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 hover:border-[var(--source-claims)]/40 shadow-2xs"
+                      >
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-semibold text-[var(--ink)]">
+                              {claimId}
                             </span>
-                          )}
+                            <span
+                              className={`rounded px-2 py-0.5 font-mono text-[10px] uppercase font-bold border ${
+                                cl.status === 'approved'
+                                  ? 'bg-[var(--ok)]/15 text-[var(--ok)] border-[var(--ok)]/30'
+                                  : 'bg-[var(--alert)]/15 text-[var(--alert)] border-[var(--alert)]/30'
+                              }`}
+                            >
+                              {cl.status}
+                            </span>
+                            {cl.category && (
+                              <span className="rounded bg-[var(--surface)] px-1.5 py-0.2 font-mono text-[10px] text-[var(--ink-soft)] border border-[var(--line)]">
+                                {cl.category}
+                              </span>
+                            )}
+                          </div>
+                          <div className="font-mono text-[11px] text-[var(--ink-soft)] pt-0.5">
+                            Amount: <span className="font-semibold text-[var(--ink)]">₹{amount.toLocaleString()}</span>
+                            {cl.approved_amount !== undefined && (
+                              <span> · Approved: ₹{cl.approved_amount.toLocaleString()}</span>
+                            )}
+                            {cl.description && <span> · {cl.description}</span>}
+                          </div>
                         </div>
-                        <div className="font-mono text-[11px] text-[var(--ink-soft)] pt-0.5">
-                          Amount: <span className="font-semibold text-[var(--ink)]">₹{amount.toLocaleString()}</span>
-                          {cl.approved_amount !== undefined && (
-                            <span> · Approved: ₹{cl.approved_amount.toLocaleString()}</span>
-                          )}
-                          {cl.description && <span> · {cl.description}</span>}
-                        </div>
-                      </div>
 
-                      <div className="shrink-0">
-                        <ProvChip
-                          source={(cl.source || 'claims') as RecordSource}
-                          timestamp={date}
-                        />
+                        <div className="shrink-0">
+                          <ProvChip
+                            source={(cl.source || 'claims') as RecordSource}
+                            timestamp={date}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </section>
         </div>
       )}
@@ -1049,7 +1206,7 @@ export function PatientDetailPage() {
             <div className="space-y-2 pt-1">
               {/* Type Filter Chips */}
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--ink-soft)] w-14">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--ink-soft)] w-14 font-semibold">
                   Type:
                 </span>
                 {[
@@ -1067,7 +1224,7 @@ export function PatientDetailPage() {
                     data-testid={`filter-type-${chip.key}`}
                     className={`rounded-[4px] px-2.5 py-1 font-mono text-[11px] transition-colors cursor-pointer ${
                       timelineTypeFilter === chip.key
-                        ? 'bg-[var(--teal)] text-white font-medium'
+                        ? 'bg-[var(--primary)] text-white font-bold shadow-xs'
                         : 'border border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
                     }`}
                   >
@@ -1078,7 +1235,7 @@ export function PatientDetailPage() {
 
               {/* Source Filter Chips */}
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--ink-soft)] w-14">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--ink-soft)] w-14 font-semibold">
                   Source:
                 </span>
                 {[
@@ -1094,7 +1251,7 @@ export function PatientDetailPage() {
                     data-testid={`filter-source-${chip.key}`}
                     className={`rounded-[4px] px-2.5 py-1 font-mono text-[11px] transition-colors cursor-pointer ${
                       timelineSourceFilter === chip.key
-                        ? 'bg-[var(--teal)] text-white font-medium'
+                        ? 'bg-[var(--primary)] text-white font-bold shadow-xs'
                         : 'border border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
                     }`}
                   >
@@ -1123,11 +1280,19 @@ export function PatientDetailPage() {
                 const dateOnly = dateStr.split('T')[0]
                 const itemType = item.item_type || item.type || 'event'
 
+                const stripColor =
+                  {
+                    ehr: 'border-l-4 border-l-[var(--source-ehr)]',
+                    lab: 'border-l-4 border-l-[var(--source-lab)]',
+                    pharmacy: 'border-l-4 border-l-[var(--source-pharmacy)]',
+                    claims: 'border-l-4 border-l-[var(--source-claims)]',
+                  }[item.source?.toLowerCase()] || 'border-l-4 border-l-[var(--line)]'
+
                 return (
                   <div
                     key={item.id}
                     data-testid={`timeline-item-${item.id}`}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-3 text-xs"
+                    className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 rounded-[6px] border border-[var(--line)] ${stripColor} bg-[var(--paper)] p-3 text-xs shadow-2xs`}
                   >
                     <div className="flex items-start sm:items-center gap-3">
                       {/* Date in Mono Tabular */}
@@ -1200,11 +1365,19 @@ export function PatientDetailPage() {
                   const whyLinked = formatWhyLinked(link)
                   const confidencePercent = `${(link.confidence_score * 100).toFixed(1)}%`
 
+                  const linkStrip =
+                    {
+                      ehr: 'border-l-4 border-l-[var(--source-ehr)]',
+                      lab: 'border-l-4 border-l-[var(--source-lab)]',
+                      pharmacy: 'border-l-4 border-l-[var(--source-pharmacy)]',
+                      claims: 'border-l-4 border-l-[var(--source-claims)]',
+                    }[link.source?.toLowerCase()] || 'border-l-4 border-l-[var(--line)]'
+
                   return (
                     <div
                       key={`${link.source}-${link.source_record_id}-${idx}`}
                       data-testid={`identity-link-${idx}`}
-                      className="rounded-[8px] border border-[var(--line)] bg-[var(--paper)] p-4 space-y-3 text-xs"
+                      className={`rounded-[8px] border border-[var(--line)] ${linkStrip} bg-[var(--paper)] p-4 space-y-3 text-xs shadow-2xs`}
                     >
                       {/* Top Row: Source, ID in mono, Confidence in mono */}
                       <div className="flex items-center justify-between">
@@ -1214,14 +1387,14 @@ export function PatientDetailPage() {
                             {link.source_record_id}
                           </span>
                         </div>
-                        <span className="font-mono text-xs font-bold tabular-nums text-[var(--ok)] bg-[var(--ok)]/10 px-2 py-0.5 rounded-[4px] border border-[var(--ok)]/20">
+                        <span className="font-mono text-xs font-bold tabular-nums text-[var(--ok)] bg-[var(--ok)]/15 px-2.5 py-0.5 rounded-[4px] border border-[var(--ok)]/40 shadow-2xs">
                           {confidencePercent}
                         </span>
                       </div>
 
                       {/* Plain Language "Why linked" Line */}
                       <div className="rounded-[4px] border border-[var(--line)] bg-[var(--surface)] p-2.5">
-                        <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--teal)] font-semibold block mb-0.5">
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--primary)] font-bold block mb-0.5">
                           Why linked:
                         </span>
                         <p className="font-sans text-xs text-[var(--ink)] leading-relaxed">
@@ -1271,6 +1444,8 @@ export function PatientDetailPage() {
           )}
         </section>
       )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }

@@ -59,7 +59,7 @@ export function AppShell({ children, showSidebar = true }: AppShellProps) {
         {showSidebar && <PatientSidebar />}
 
         {/* Central Content Area */}
-        <main className="flex-1 overflow-y-auto bg-[var(--paper)]">
+        <main className="flex-1 min-w-0 overflow-y-auto bg-[var(--paper)]">
           {children}
         </main>
 

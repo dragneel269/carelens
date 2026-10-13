@@ -129,18 +129,18 @@ export default function DesignSystemPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] transition-colors duration-150 pb-20 selection:bg-[var(--teal)]/20 selection:text-[var(--teal)]">
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] transition-colors duration-150 pb-20 selection:bg-[var(--primary)]/20 selection:text-[var(--primary)]">
       {/* Top Header */}
       <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-[var(--surface)]/95 backdrop-blur-xs px-6 py-3">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="font-serif text-2xl font-semibold tracking-tight text-[var(--teal)]">
+            <span className="font-serif text-2xl font-bold tracking-tight text-[var(--primary)]">
               CareLens
             </span>
-            <span className="rounded-[4px] border border-[var(--line)] bg-[var(--paper)] px-2 py-0.5 font-mono text-[11px] font-medium tracking-wider text-[var(--ink-soft)] uppercase">
-              Clinical Editorial System
+            <span className="rounded-[4px] border border-[var(--line)] bg-[var(--paper)] px-2 py-0.5 font-mono text-[11px] font-bold tracking-wider text-[var(--ink-soft)] uppercase">
+              Vibrant Clinical System
             </span>
-            <span className="text-xs text-[var(--ink-soft)] hidden md:inline">
+            <span className="text-xs text-[var(--ink-soft)] hidden md:inline font-mono">
               /design route
             </span>
           </div>
@@ -152,17 +152,17 @@ export default function DesignSystemPage() {
               variant="outline"
               size="sm"
               onClick={toggleTheme}
-              className="gap-2 border-[var(--line)] text-xs text-[var(--ink)]"
+              className="gap-2 border-[var(--line)] text-xs text-[var(--ink)] font-semibold"
               aria-label="Toggle theme mode"
             >
               {isDark ? (
                 <>
-                  <Sun className="h-3.5 w-3.5 text-[var(--teal)]" strokeWidth={1.75} />
+                  <Sun className="h-3.5 w-3.5 text-[var(--primary)]" strokeWidth={2} />
                   <span>Light Theme</span>
                 </>
               ) : (
                 <>
-                  <Moon className="h-3.5 w-3.5 text-[var(--teal)]" strokeWidth={1.75} />
+                  <Moon className="h-3.5 w-3.5 text-[var(--primary)]" strokeWidth={2} />
                   <span>Dark Theme</span>
                 </>
               )}
@@ -171,7 +171,7 @@ export default function DesignSystemPage() {
             {/* Link back to home */}
             <a
               href="/"
-              className="rounded-[6px] border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--ink-soft)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--teal)]"
+              className="rounded-[6px] border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1 text-xs font-semibold text-[var(--ink-soft)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
             >
               Back to Root
             </a>
@@ -184,19 +184,19 @@ export default function DesignSystemPage() {
         {/* Intro Banner */}
         <section className="space-y-2 border-b border-[var(--line)] pb-6">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs uppercase tracking-widest text-[var(--teal)] font-semibold">
+            <span className="font-mono text-xs uppercase tracking-widest text-[var(--primary)] font-bold">
               Design System Spec
             </span>
             <span className="text-[var(--line)]">·</span>
-            <span className="text-xs text-[var(--ink-soft)]">
-              4px grid · hairline borders · no gradients · Newsreader / Instrument Sans / IBM Plex Mono
+            <span className="text-xs text-[var(--ink-soft)] font-mono">
+              4px grid · hairline borders · solid colour blocks and small accent strokes only (no gradient backgrounds behind text)
             </span>
           </div>
-          <h1 className="font-serif text-3xl font-medium tracking-tight text-[var(--ink)] sm:text-4xl">
-            Clinical Editorial Component Specimen
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
+            Vibrant Clinical Component Specimen
           </h1>
           <p className="max-w-3xl text-sm leading-relaxed text-[var(--ink-soft)]">
-            A calm, paper-like medical chart. Ingesting records across EHR, lab, pharmacy, and insurer
+            A high-contrast, paper-like medical chart with vivid clinical demarcation. Ingesting records across EHR, lab, pharmacy, and insurer
             systems without national ID dependencies. Self-hosted fonts, role-based redactions with
             sweep animations, and tamper-evident ledger primitives.
           </p>
@@ -206,11 +206,11 @@ export default function DesignSystemPage() {
         <section className="space-y-4">
           <div className="flex items-center justify-between border-b border-[var(--line)] pb-2">
             <div>
-              <h2 className="font-serif text-xl font-medium text-[var(--ink)]">
+              <h2 className="font-serif text-xl font-bold text-[var(--ink)]">
                 1. Signature Clinical Pieces
               </h2>
               <p className="text-xs text-[var(--ink-soft)]">
-                Redacted with tooltip and 220ms sweep, MatchBadge, SourceBadge, ProvChip, HashChip.
+                Redacted with tooltip and 220ms sweep, MatchBadge with confidence progress ring, SourceBadge, ProvChip, HashChip.
               </p>
             </div>
           </div>
@@ -221,16 +221,16 @@ export default function DesignSystemPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Lock className="h-4 w-4 text-[var(--teal)]" strokeWidth={1.5} />
-                    <CardTitle className="text-base">Role-Based Redaction & Sweep Animation</CardTitle>
+                    <Lock className="h-4 w-4 text-[var(--primary)]" strokeWidth={2} />
+                    <CardTitle className="text-base font-bold">Role-Based Redaction & Sweep Animation</CardTitle>
                   </div>
                   <div className="flex items-center gap-1.5 rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-1 text-xs">
-                    <span className="text-[11px] font-mono text-[var(--ink-soft)] px-1">Viewing as:</span>
+                    <span className="text-[11px] font-mono text-[var(--ink-soft)] px-1 font-semibold">Viewing as:</span>
                     <button
                       onClick={() => setCurrentRole("doctor")}
-                      className={`px-2 py-0.5 rounded-[4px] text-xs font-medium cursor-pointer transition-colors ${
+                      className={`px-2 py-0.5 rounded-[4px] text-xs font-semibold cursor-pointer transition-colors ${
                         currentRole === "doctor"
-                          ? "bg-[var(--surface)] text-[var(--teal)] border border-[var(--line)]"
+                          ? "bg-[var(--primary)] text-white shadow-xs"
                           : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
                       }`}
                     >
@@ -238,9 +238,9 @@ export default function DesignSystemPage() {
                     </button>
                     <button
                       onClick={() => setCurrentRole("pharmacist")}
-                      className={`px-2 py-0.5 rounded-[4px] text-xs font-medium cursor-pointer transition-colors ${
+                      className={`px-2 py-0.5 rounded-[4px] text-xs font-semibold cursor-pointer transition-colors ${
                         currentRole === "pharmacist"
-                          ? "bg-[var(--surface)] text-[var(--teal)] border border-[var(--line)]"
+                          ? "bg-[var(--primary)] text-white shadow-xs"
                           : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
                       }`}
                     >
@@ -248,9 +248,9 @@ export default function DesignSystemPage() {
                     </button>
                     <button
                       onClick={() => setCurrentRole("billing")}
-                      className={`px-2 py-0.5 rounded-[4px] text-xs font-medium cursor-pointer transition-colors ${
+                      className={`px-2 py-0.5 rounded-[4px] text-xs font-semibold cursor-pointer transition-colors ${
                         currentRole === "billing"
-                          ? "bg-[var(--surface)] text-[var(--vermilion)] border border-[var(--line)] font-semibold"
+                          ? "bg-[var(--alert)] text-white shadow-xs"
                           : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
                       }`}
                     >
@@ -299,8 +299,8 @@ export default function DesignSystemPage() {
                     </div>
 
                     <div className="space-y-1">
-                      <span className="text-[11px] font-mono text-[var(--ink-soft)] block uppercase">Critical Allergy</span>
-                      <div className="font-medium text-[var(--vermilion)]">
+                      <span className="text-[11px] font-mono text-[var(--ink-soft)] block uppercase font-semibold">Critical Allergy</span>
+                      <div className="font-semibold text-[var(--alert)]">
                         <Redacted
                           redacted={currentRole === "billing"}
                           reason="Hidden for Billing - consent required"
@@ -312,7 +312,7 @@ export default function DesignSystemPage() {
                     </div>
 
                     <div className="space-y-1">
-                      <span className="text-[11px] font-mono text-[var(--ink-soft)] block uppercase">Insurance Claim Item</span>
+                      <span className="text-[11px] font-mono text-[var(--ink-soft)] block uppercase font-semibold">Insurance Claim Item</span>
                       <div className="font-medium text-[var(--ink)]">
                         <span>OPD Consultation Claim · ₹1,200 (Approved)</span>
                       </div>
@@ -321,7 +321,7 @@ export default function DesignSystemPage() {
                 </div>
 
                 <div className="flex items-center gap-2 text-xs text-[var(--ink-soft)]">
-                  <Info className="h-3.5 w-3.5 text-[var(--teal)] shrink-0" />
+                  <Info className="h-3.5 w-3.5 text-[var(--primary)] shrink-0" />
                   <span>
                     Current Role Status:{" "}
                     <strong className="text-[var(--ink)]">
@@ -337,9 +337,9 @@ export default function DesignSystemPage() {
             {/* MatchBadge Specimen */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">MatchBadge</CardTitle>
+                <CardTitle className="text-base font-bold">MatchBadge</CardTitle>
                 <CardDescription>
-                  Multi-source identity resolution score with source-colour dots.
+                  Multi-source identity resolution score with vivid SVG confidence ring.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -348,8 +348,8 @@ export default function DesignSystemPage() {
                     systems={["ehr", "lab", "pharmacy", "claims"]}
                     confidence={96}
                   />
-                  <p className="mt-1 text-[11px] text-[var(--ink-soft)]">
-                    4 sources linked (Hero patient auto-link score ≥ 0.90)
+                  <p className="mt-1 text-[11px] text-[var(--ink-soft)] font-mono">
+                    4 sources linked (Hero auto-link score ≥ 0.90)
                   </p>
                 </div>
 
@@ -358,7 +358,7 @@ export default function DesignSystemPage() {
                     systems={["ehr", "lab", "pharmacy"]}
                     confidence={88}
                   />
-                  <p className="mt-1 text-[11px] text-[var(--ink-soft)]">
+                  <p className="mt-1 text-[11px] text-[var(--ink-soft)] font-mono">
                     3 sources linked · ReviewItem threshold (0.70 - 0.89)
                   </p>
                 </div>
@@ -368,7 +368,7 @@ export default function DesignSystemPage() {
                     systems={["ehr", "claims"]}
                     confidence={64}
                   />
-                  <p className="mt-1 text-[11px] text-[var(--ink-soft)]">
+                  <p className="mt-1 text-[11px] text-[var(--ink-soft)] font-mono">
                     2 sources · Unlinked pair below threshold
                   </p>
                 </div>
@@ -378,9 +378,9 @@ export default function DesignSystemPage() {
             {/* SourceBadges */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">SourceBadges</CardTitle>
+                <CardTitle className="text-base font-bold">SourceBadges</CardTitle>
                 <CardDescription>
-                  Strict tokens for the 4 medical data sources.
+                  Strict Vibrant Clinical tokens for the 4 medical data sources.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -391,10 +391,22 @@ export default function DesignSystemPage() {
                   <SourceBadge source="claims" />
                 </div>
                 <div className="text-[11px] text-[var(--ink-soft)] leading-relaxed space-y-1 font-mono">
-                  <div>EHR: #2B6CB0 / #6EA8E6</div>
-                  <div>Lab: #4F7F3A / #8DBB6E</div>
-                  <div>Pharmacy: #C07A1F / #E3A24A</div>
-                  <div>Claims: #8C5B45 / #C99278</div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[var(--source-ehr)]" />
+                    <span>EHR: #1F6FFF / #4D8DFF</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[var(--source-lab)]" />
+                    <span>Lab: #12B76A / #22D37E</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[var(--source-pharmacy)]" />
+                    <span>Pharmacy: #FF8A00 / #FFA033</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[var(--source-claims)]" />
+                    <span>Claims: #E83E8C / #F065A5</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -402,7 +414,7 @@ export default function DesignSystemPage() {
             {/* ProvChip */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">ProvChip</CardTitle>
+                <CardTitle className="text-base font-bold">ProvChip</CardTitle>
                 <CardDescription>
                   Provenance source and ISO timestamp on clinical facts.
                 </CardDescription>
@@ -442,7 +454,7 @@ export default function DesignSystemPage() {
             {/* HashChip */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">HashChip</CardTitle>
+                <CardTitle className="text-base font-bold">HashChip</CardTitle>
                 <CardDescription>
                   8-character mono tabular ledger chip with click-to-copy.
                 </CardDescription>
@@ -458,17 +470,59 @@ export default function DesignSystemPage() {
                 </p>
               </CardContent>
             </Card>
+
+            {/* Vibrant Clinical Palette Swatches Specimen */}
+            <Card className="lg:col-span-3">
+              <CardHeader>
+                <CardTitle className="text-base font-bold">Vibrant Clinical Palette Swatches</CardTitle>
+                <CardDescription>
+                  Strict solid colour blocks and accent strokes. Contrast verified for WCAG AA compliance.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 font-mono text-[11px]">
+                  {[
+                    { name: 'paper', hex: '#FAF7F2', dark: '#0C1319', bg: 'bg-[var(--paper)]', text: 'text-[var(--ink)]', border: 'border-[var(--line)]' },
+                    { name: 'surface', hex: '#FFFFFF', dark: '#131C24', bg: 'bg-[var(--surface)]', text: 'text-[var(--ink)]', border: 'border-[var(--line)]' },
+                    { name: 'tint-teal', hex: '#E3F6F4', dark: '#0A2E2C', bg: 'bg-[var(--tint-teal)]', text: 'text-[var(--ink)]', border: 'border-[var(--line)]' },
+                    { name: 'ink', hex: '#0F1E2B', dark: '#F0ECE1', bg: 'bg-[var(--ink)]', text: 'text-[var(--paper)]', border: 'border-[var(--line)]' },
+                    { name: 'primary', hex: '#00A19B', dark: '#00C4BC', bg: 'bg-[var(--primary)]', text: 'text-white', border: 'border-[var(--primary)]' },
+                    { name: 'primary-strong', hex: '#007F7A', dark: '#009E97', bg: 'bg-[var(--primary-strong)]', text: 'text-white', border: 'border-[var(--primary-strong)]' },
+                    { name: 'alert', hex: '#FF4D3D', dark: '#FF5C4D', bg: 'bg-[var(--alert)]', text: 'text-white', border: 'border-[var(--alert)]' },
+                    { name: 'warn', hex: '#FFB020', dark: '#FFBA33', bg: 'bg-[var(--warn)]', text: 'text-black', border: 'border-[var(--warn)]' },
+                    { name: 'ok', hex: '#22B573', dark: '#2ED68B', bg: 'bg-[var(--ok)]', text: 'text-white', border: 'border-[var(--ok)]' },
+                    { name: 'EHR', hex: '#1F6FFF', dark: '#4D8DFF', bg: 'bg-[var(--source-ehr)]', text: 'text-white', border: 'border-[var(--source-ehr)]' },
+                    { name: 'Lab', hex: '#12B76A', dark: '#22D37E', bg: 'bg-[var(--source-lab)]', text: 'text-white', border: 'border-[var(--source-lab)]' },
+                    { name: 'Pharmacy', hex: '#FF8A00', dark: '#FFA033', bg: 'bg-[var(--source-pharmacy)]', text: 'text-white', border: 'border-[var(--source-pharmacy)]' },
+                    { name: 'Claims', hex: '#E83E8C', dark: '#F065A5', bg: 'bg-[var(--source-claims)]', text: 'text-white', border: 'border-[var(--source-claims)]' },
+                  ].map((swatch) => (
+                    <div
+                      key={swatch.name}
+                      className="rounded-[6px] border border-[var(--line)] bg-[var(--paper)] overflow-hidden shadow-2xs"
+                    >
+                      <div className={`h-12 w-full ${swatch.bg} flex items-center justify-center font-bold text-xs ${swatch.text}`}>
+                        {swatch.name}
+                      </div>
+                      <div className="p-2 space-y-0.5 text-[10px] text-[var(--ink-soft)]">
+                        <div>Light: <span className="text-[var(--ink)] font-semibold">{swatch.hex}</span></div>
+                        <div>Dark: <span className="text-[var(--ink)] font-semibold">{swatch.dark}</span></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
         {/* 2. shadcn Core Primitives Rethemed */}
         <section className="space-y-4">
           <div className="border-b border-[var(--line)] pb-2">
-            <h2 className="font-serif text-xl font-medium text-[var(--ink)]">
+            <h2 className="font-serif text-xl font-bold text-[var(--ink)]">
               2. Core Controls & Navigation (Rethemed)
             </h2>
             <p className="text-xs text-[var(--ink-soft)]">
-              Button, Input, Badge, Tabs, Popover, Sheet, Tooltip. No default shadcn zinc. Hairline borders and visible teal focus rings.
+              Button, Input, Badge, Tabs, Popover, Sheet, Tooltip. No default shadcn zinc. Hairline borders and visible primary focus rings.
             </p>
           </div>
 
@@ -476,18 +530,18 @@ export default function DesignSystemPage() {
             {/* Buttons */}
             <Card className="lg:col-span-2">
               <CardHeader>
-                <CardTitle className="text-base">Buttons & Visible Focus</CardTitle>
+                <CardTitle className="text-base font-bold">Buttons & Visible Focus</CardTitle>
                 <CardDescription>
-                  Radius 6px, hairline borders, no shadows or gradients. Strict teal/vermilion/line tokens.
+                  Radius 6px, hairline borders, no shadows or gradients. Strict primary/alert/line tokens.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <Button variant="default">Primary Teal</Button>
+                  <Button variant="default">Primary (#00A19B)</Button>
                   <Button variant="secondary">Secondary Surface</Button>
                   <Button variant="outline">Outline Hairline</Button>
                   <Button variant="clinical">Clinical Code</Button>
-                  <Button variant="destructive">Alert Vermilion</Button>
+                  <Button variant="destructive">Alert (#FF4D3D)</Button>
                   <Button variant="ghost">Ghost Action</Button>
                   <Button variant="link">Inline Link</Button>
                 </div>
@@ -503,19 +557,19 @@ export default function DesignSystemPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex items-center justify-between py-3">
-                <span className="text-xs text-[var(--ink-soft)]">
-                  Focus rings are 2px Teal outline with offset for high accessibility.
+                <span className="text-xs text-[var(--ink-soft)] font-mono">
+                  Focus rings are 2px Primary outline with offset for high accessibility.
                 </span>
                 <TooltipProvider delayDuration={100}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="sm" className="gap-1 text-xs">
-                        <HelpCircle className="h-3.5 w-3.5 text-[var(--teal)]" />
+                      <Button variant="ghost" size="sm" className="gap-1 text-xs font-semibold">
+                        <HelpCircle className="h-3.5 w-3.5 text-[var(--primary)]" />
                         <span>Tooltip Preview</span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="top">
-                      Clinical Editorial: Tooltips render on surface with hairline border
+                      Vibrant Clinical: Tooltips render on surface with hairline border
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -525,14 +579,14 @@ export default function DesignSystemPage() {
             {/* Inputs */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Inputs & Search</CardTitle>
+                <CardTitle className="text-base font-bold">Inputs & Search</CardTitle>
                 <CardDescription>
                   Calm input styling with visible focus ring.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-1">
-                  <label htmlFor="patient-search-input" className="text-[11px] font-mono text-[var(--ink-soft)] uppercase">
+                  <label htmlFor="patient-search-input" className="text-[11px] font-mono text-[var(--ink-soft)] uppercase font-semibold">
                     Patient Search Query
                   </label>
                   <Input
@@ -542,7 +596,7 @@ export default function DesignSystemPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="loinc-input" className="text-[11px] font-mono text-[var(--ink-soft)] uppercase">
+                  <label htmlFor="loinc-input" className="text-[11px] font-mono text-[var(--ink-soft)] uppercase font-semibold">
                     LOINC Code Input (Disabled)
                   </label>
                   <Input
@@ -564,18 +618,18 @@ export default function DesignSystemPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base">Tabs, Popover & Sheet Drawer</CardTitle>
+                <CardTitle className="text-base font-bold">Tabs, Popover & Sheet Drawer</CardTitle>
                 <div className="flex items-center gap-2">
                   {/* Popover */}
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" size="sm" className="gap-1.5 text-xs">
-                        <Filter className="h-3 w-3 text-[var(--teal)]" />
+                      <Button variant="outline" size="sm" className="gap-1.5 text-xs font-semibold">
+                        <Filter className="h-3 w-3 text-[var(--primary)]" />
                         <span>Filter Sources</span>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent align="end" className="w-64 space-y-2">
-                      <div className="font-serif text-sm font-medium text-[var(--ink)]">
+                      <div className="font-serif text-sm font-semibold text-[var(--ink)]">
                         Select Ingestion Sources
                       </div>
                       <p className="text-xs text-[var(--ink-soft)]">
@@ -583,15 +637,15 @@ export default function DesignSystemPage() {
                       </p>
                       <div className="space-y-1.5 pt-1 text-xs">
                         <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" defaultChecked className="rounded-[3px] accent-[var(--teal)]" />
+                          <input type="checkbox" defaultChecked className="rounded-[3px] accent-[var(--primary)]" />
                           <span>EHR (Apollo Multi-Specialty)</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" defaultChecked className="rounded-[3px] accent-[var(--teal)]" />
+                          <input type="checkbox" defaultChecked className="rounded-[3px] accent-[var(--primary)]" />
                           <span>Lab A & B (Biomarker Panels)</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" defaultChecked className="rounded-[3px] accent-[var(--teal)]" />
+                          <input type="checkbox" defaultChecked className="rounded-[3px] accent-[var(--primary)]" />
                           <span>Pharmacy (Dispensations)</span>
                         </label>
                       </div>
@@ -601,7 +655,7 @@ export default function DesignSystemPage() {
                   {/* Sheet Drawer Trigger (380px drawer per design spec) */}
                   <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                     <SheetTrigger asChild>
-                      <Button variant="default" size="sm" className="gap-1.5 text-xs">
+                      <Button variant="default" size="sm" className="gap-1.5 text-xs font-bold shadow-xs">
                         <Layers className="h-3 w-3" />
                         <span>Open 380px Drawer</span>
                       </Button>
@@ -616,8 +670,8 @@ export default function DesignSystemPage() {
                       <div className="py-4 space-y-4 text-xs">
                         <div className="rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-3 space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="font-mono text-[11px] text-[var(--ink-soft)] uppercase">Link Score</span>
-                            <span className="font-mono font-semibold text-[var(--teal)]">0.96 (Auto-link)</span>
+                            <span className="font-mono text-[11px] text-[var(--ink-soft)] uppercase font-semibold">Link Score</span>
+                            <span className="font-mono font-bold text-[var(--primary)]">0.96 (Auto-link)</span>
                           </div>
                           <div className="space-y-1 text-[11px] font-mono text-[var(--ink-soft)]">
                             <div>Name match: 0.35 / 0.35 (Token set ratio)</div>
@@ -628,25 +682,25 @@ export default function DesignSystemPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <span className="font-mono text-[11px] text-[var(--ink-soft)] uppercase block">
+                          <span className="font-mono text-[11px] text-[var(--ink-soft)] uppercase block font-semibold">
                             Linked System IDs
                           </span>
                           <div className="space-y-1.5">
                             <div className="flex items-center justify-between border-b border-[var(--line)] pb-1.5">
                               <SourceBadge source="ehr" />
-                              <span className="font-mono text-xs">APL-004512</span>
+                              <span className="font-mono text-xs font-semibold">APL-004512</span>
                             </div>
                             <div className="flex items-center justify-between border-b border-[var(--line)] pb-1.5">
                               <SourceBadge source="lab" />
-                              <span className="font-mono text-xs">LB-77120 / TX-9981</span>
+                              <span className="font-mono text-xs font-semibold">LB-77120 / TX-9981</span>
                             </div>
                             <div className="flex items-center justify-between border-b border-[var(--line)] pb-1.5">
                               <SourceBadge source="pharmacy" />
-                              <span className="font-mono text-xs">PH-30991</span>
+                              <span className="font-mono text-xs font-semibold">PH-30991</span>
                             </div>
                             <div className="flex items-center justify-between">
                               <SourceBadge source="claims" />
-                              <span className="font-mono text-xs">STAR-48221</span>
+                              <span className="font-mono text-xs font-semibold">STAR-48221</span>
                             </div>
                           </div>
                         </div>
@@ -672,7 +726,7 @@ export default function DesignSystemPage() {
                         <span className="text-[11px] font-mono text-[var(--ink-soft)] uppercase">HbA1c (LOINC 4548-4)</span>
                         <SourceBadge source="lab" />
                       </div>
-                      <div className="font-mono text-xl font-medium tabular-nums text-[var(--vermilion)]">
+                      <div className="font-mono text-xl font-bold tabular-nums text-[var(--alert)]">
                         7.9 %
                       </div>
                       <div className="text-[11px] text-[var(--ink-soft)]">
@@ -685,7 +739,7 @@ export default function DesignSystemPage() {
                         <span className="text-[11px] font-mono text-[var(--ink-soft)] uppercase">Fasting Glucose (LOINC 1558-6)</span>
                         <SourceBadge source="lab" />
                       </div>
-                      <div className="font-mono text-xl font-medium tabular-nums text-[var(--ink)]">
+                      <div className="font-mono text-xl font-bold tabular-nums text-[var(--ink)]">
                         134 mg/dL
                       </div>
                       <div className="text-[11px] text-[var(--ink-soft)]">
@@ -698,7 +752,7 @@ export default function DesignSystemPage() {
                         <span className="text-[11px] font-mono text-[var(--ink-soft)] uppercase">Total Cholesterol</span>
                         <SourceBadge source="lab" />
                       </div>
-                      <div className="font-mono text-xl font-medium tabular-nums text-[var(--ink)]">
+                      <div className="font-mono text-xl font-bold tabular-nums text-[var(--ink)]">
                         188 mg/dL
                       </div>
                       <div className="text-[11px] text-[var(--ink-soft)]">
@@ -719,7 +773,7 @@ export default function DesignSystemPage() {
                       <ProvChip source="ehr" sourceRecordId="APL-004512" timestamp="2026-08-01T00:00:00Z" />
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-[var(--vermilion)]">Mox 500 (Amoxicillin) — Allergy Conflict</span>
+                      <span className="font-semibold text-[var(--alert)]">Mox 500 (Amoxicillin) — Allergy Conflict</span>
                       <Badge variant="destructive">Conflict Flagged</Badge>
                     </div>
                   </div>
@@ -728,8 +782,8 @@ export default function DesignSystemPage() {
                 <TabsContent value="allergies" className="pt-2">
                   <div className="rounded-[6px] border border-[var(--line)] bg-[var(--paper)] p-4 space-y-1.5 text-xs">
                     <div className="flex items-center gap-2">
-                      <ShieldAlert className="h-4 w-4 text-[var(--vermilion)]" />
-                      <span className="font-semibold text-[var(--vermilion)]">Penicillin Class Allergy</span>
+                      <ShieldAlert className="h-4 w-4 text-[var(--alert)]" />
+                      <span className="font-bold text-[var(--alert)]">Penicillin Class Allergy</span>
                     </div>
                     <p className="text-[var(--ink-soft)]">
                       Recorded at Apollo Hospital EHR. Mox 500 dispensation from pharmacy flagged as contraindication.

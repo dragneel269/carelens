@@ -41,7 +41,7 @@ export function HashChip({
             type="button"
             onClick={handleCopy}
             className={cn(
-              "group inline-flex items-center gap-1 rounded-[4px] border border-[var(--line)] bg-[var(--paper)] px-1.5 py-0.5 font-mono text-[11px] font-medium tabular-nums text-[var(--ink-soft)] transition-colors hover:border-[var(--teal)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--teal)] cursor-pointer select-none",
+              "group inline-flex items-center gap-1 rounded-[4px] border border-[var(--line)] bg-[var(--paper)] px-1.5 py-0.5 font-mono text-[11px] font-medium tabular-nums text-[var(--ink-soft)] transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 hover:border-[var(--teal)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--teal)] cursor-pointer select-none",
               className
             )}
             aria-label={`Audit hash: ${hash}. Click to copy.`}
@@ -61,14 +61,22 @@ export function HashChip({
         </TooltipTrigger>
         <TooltipContent
           side="top"
-          className="border-[var(--line)] bg-[var(--surface)] text-[var(--ink)] font-mono text-[11px] py-1 px-2.5 shadow-md"
+          className="border-[var(--line)] bg-[var(--surface)] text-[var(--ink)] font-sans text-xs py-1.5 px-3 shadow-md max-w-xs"
         >
           {copied ? (
-            <span className="text-[var(--ok)] font-medium">Copied to clipboard</span>
+            <span className="text-[var(--ok)] font-medium">Copied full hash to clipboard</span>
           ) : (
-            <span>
-              SHA-256: <strong className="text-[var(--teal)]">{hash}</strong>
-            </span>
+            <div>
+              <div className="font-semibold text-[var(--ink)] mb-0.5">
+                Cryptographic Block Hash
+              </div>
+              <p className="text-[11px] text-[var(--ink-soft)] font-mono break-all mb-1">
+                {hash}
+              </p>
+              <p className="text-[10px] text-[var(--ink-soft)]">
+                Immutable SHA-256 hash chaining each read/write audit event to its parent block. Click to copy.
+              </p>
+            </div>
           )}
         </TooltipContent>
       </Tooltip>

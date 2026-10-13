@@ -19,6 +19,7 @@ import { useConsents, useAuditEntries, apiRequest, type ConsentItem } from '../a
 import { useAuthStore } from '../lib/auth'
 import { SkeletonCard } from '../components/clinical/SkeletonCard'
 import { EmptyState } from '../components/clinical/EmptyState'
+import { CountUp } from '../components/clinical/CountUp'
 
 interface GroupDefinition {
   key: string
@@ -266,16 +267,16 @@ export function PortalPage() {
       {/* Patient Portal Header (Calmer, larger, plainer styling) */}
       <header
         data-testid="portal-header"
-        className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-8 shadow-xs space-y-4"
+        className="rounded-[10px] border border-[var(--line)] border-l-4 border-l-[var(--primary)] bg-[var(--surface)] p-8 shadow-xs space-y-4"
       >
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2.5">
-              <span className="font-mono text-xs uppercase tracking-wider text-[var(--teal)] font-semibold">
+              <span className="font-mono text-xs uppercase tracking-wider text-[var(--primary)] font-bold">
                 Patient Privacy & Consent Portal
               </span>
               <span className="text-[var(--line)]">·</span>
-              <span className="font-mono text-xs text-[var(--ok)] flex items-center gap-1 font-medium">
+              <span className="font-mono text-xs text-[var(--ok)] flex items-center gap-1 font-bold">
                 <ShieldCheck className="h-4 w-4" /> DPDP Act 2023 Compliant
               </span>
             </div>
@@ -296,7 +297,7 @@ export function PortalPage() {
               <span className="font-bold text-[var(--ink)] text-sm">
                 {isPatientUser ? currentUser.full_name : 'Ramesh Kumar'}
               </span>
-              <span className="text-[var(--teal)] block font-semibold text-[11px] pt-0.5">
+              <span className="text-[var(--primary)] block font-bold text-[11px] pt-0.5">
                 {targetClid}
               </span>
             </div>
@@ -306,7 +307,7 @@ export function PortalPage() {
               onClick={handleRevokeAll}
               disabled={isProcessing}
               data-testid="revoke-all-button"
-              className="inline-flex items-center gap-2 rounded-[6px] border border-[var(--alert-vermilion)] bg-[var(--alert-vermilion)]/10 px-3.5 py-2 font-sans text-xs font-semibold text-[var(--alert-vermilion)] hover:bg-[var(--alert-vermilion)] hover:text-white transition-colors cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-[6px] border border-[var(--alert)]/40 bg-[var(--alert)]/15 px-3.5 py-2 font-sans text-xs font-bold text-[var(--alert)] hover:bg-[var(--alert)] hover:text-white transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
             >
               <Ban className="h-4 w-4" />
               <span>Revoke All Consents</span>
@@ -318,9 +319,10 @@ export function PortalPage() {
       {/* SECTION 1: Consent Toggles by Group & Category */}
       <section
         data-testid="consent-groups-section"
-        className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-8 space-y-6 shadow-xs"
+        className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] overflow-hidden shadow-xs"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[var(--line)] pb-4">
+        {/* Tinted Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[var(--primary)]/20 bg-[var(--tint-teal)]/30 p-6">
           <div>
             <h2 className="font-serif text-xl font-bold text-[var(--ink)]">
               Departmental Consent Directives
@@ -330,150 +332,179 @@ export function PortalPage() {
             </p>
           </div>
 
-          <span className="font-mono text-xs text-[var(--ink-soft)]">
-            {Object.keys(consentByGroup).length} of {CONSENT_GROUPS.length} Groups Active
+          <span className="font-mono text-xs font-bold text-[var(--primary)] bg-[var(--surface)] px-3 py-1 rounded-[4px] border border-[var(--primary)]/20 shadow-2xs">
+            <CountUp value={Object.keys(consentByGroup).length} /> of {CONSENT_GROUPS.length} Groups Active
           </span>
         </div>
 
-        {isLoadingConsents ? (
-          <div className="space-y-4">
-            <SkeletonCard lines={4} />
-            <SkeletonCard lines={4} />
-          </div>
-        ) : isErrorConsents ? (
-          <EmptyState
-            title="Unable to load consents"
-            description={errorConsents?.message || 'Check database connection.'}
-            action={{ label: 'Retry', onClick: () => refetchConsents() }}
-          />
-        ) : (
-          <div className="grid gap-5 md:grid-cols-2">
-            {CONSENT_GROUPS.map((grp) => {
-              const activeConsent = consentByGroup[grp.key]
-              const isActive = Boolean(activeConsent)
-              const IconComp = grp.icon
-              const activeCats = activeConsent
-                ? activeConsent.categories.split(',').map((c) => c.trim())
-                : []
+        <div className="p-8">
+          {isLoadingConsents ? (
+            <div className="space-y-4">
+              <SkeletonCard lines={4} />
+              <SkeletonCard lines={4} />
+            </div>
+          ) : isErrorConsents ? (
+            <EmptyState
+              title="Unable to load consents"
+              description={errorConsents?.message || 'Check database connection.'}
+              nextStep="Verify user authentication or retry backend connection."
+              action={{ label: 'Retry', onClick: () => refetchConsents() }}
+            />
+          ) : (
+            <div className="grid gap-5 md:grid-cols-2">
+              {CONSENT_GROUPS.map((grp) => {
+                const activeConsent = consentByGroup[grp.key]
+                const isActive = Boolean(activeConsent)
+                const IconComp = grp.icon
+                const activeCats = activeConsent
+                  ? activeConsent.categories.split(',').map((c) => c.trim())
+                  : []
 
-              return (
-                <div
-                  key={grp.key}
-                  data-testid={`consent-card-${grp.key}`}
-                  className={`rounded-[8px] border p-5 space-y-4 transition-all ${
-                    isActive
-                      ? 'border-[var(--line)] bg-[var(--paper)]'
-                      : 'border-[var(--line)]/70 bg-[var(--surface)] opacity-75'
-                  }`}
-                >
-                  {/* Card Header: Icon, Group Name, Status Pill, Grant/Revoke Button */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={`rounded-[6px] p-2 border ${
-                          isActive
-                            ? 'border-[var(--ok)]/30 bg-[var(--ok)]/10 text-[var(--ok)]'
-                            : 'border-[var(--line)] bg-[var(--surface)] text-[var(--ink-soft)]'
-                        }`}
-                      >
-                        <IconComp className="h-5 w-5" />
-                      </div>
+                const stripColor =
+                  {
+                    clinicians: 'border-l-4 border-l-[var(--source-ehr)]',
+                    pharmacy: 'border-l-4 border-l-[var(--source-pharmacy)]',
+                    lab: 'border-l-4 border-l-[var(--source-lab)]',
+                    billing: 'border-l-4 border-l-[var(--source-claims)]',
+                  }[grp.key] || 'border-l-4 border-l-[var(--line)]'
 
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-serif font-bold text-base text-[var(--ink)]">
-                            {grp.label}
-                          </h3>
-                        </div>
-
-                        <div className="flex items-center gap-2 pt-1 font-mono text-[11px]">
-                          <span
-                            className={`rounded px-1.5 py-0.5 uppercase font-bold text-[10px] tracking-wider ${
-                              isActive
-                                ? 'bg-[var(--ok)]/10 text-[var(--ok)] border border-[var(--ok)]/30'
-                                : 'bg-[var(--alert-vermilion)]/10 text-[var(--alert-vermilion)] border border-[var(--alert-vermilion)]/30'
-                            }`}
-                          >
-                            {isActive ? 'Active Grant' : 'Access Revoked'}
-                          </span>
-                          <span className="text-[var(--ink-soft)]">
-                            Purpose: <span className="text-[var(--ink)] capitalize font-semibold">{grp.purpose}</span>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Group Toggle / Action Button */}
-                    {isActive ? (
-                      <button
-                        onClick={() => handleRevokeGroup(grp.key)}
-                        disabled={isProcessing}
-                        data-testid={`btn-revoke-${grp.key}`}
-                        className="rounded-[6px] border border-[var(--alert-vermilion)]/40 bg-[var(--alert-vermilion)]/10 px-3 py-1.5 font-sans text-xs font-semibold text-[var(--alert-vermilion)] hover:bg-[var(--alert-vermilion)] hover:text-white transition-colors cursor-pointer shrink-0 disabled:opacity-50"
-                      >
-                        Revoke Group
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleGrantGroup(grp)}
-                        disabled={isProcessing}
-                        data-testid={`btn-grant-${grp.key}`}
-                        className="rounded-[6px] border border-[var(--ok)]/40 bg-[var(--ok)]/10 px-3 py-1.5 font-sans text-xs font-semibold text-[var(--ok)] hover:bg-[var(--ok)] hover:text-white transition-colors cursor-pointer shrink-0 disabled:opacity-50"
-                      >
-                        Grant Access
-                      </button>
-                    )}
-                  </div>
-
-                  <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
-                    {grp.description}
-                  </p>
-
-                  {/* Category Toggles */}
-                  <div className="space-y-1.5 pt-2 border-t border-[var(--line)]">
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--ink-soft)] block">
-                      Permitted Data Categories (Click to Toggle):
+                const statusPill = (() => {
+                  if (!isActive) {
+                    return (
+                      <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 uppercase font-bold text-[10px] tracking-wider bg-[var(--alert)]/15 text-[var(--alert)] border border-[var(--alert)]/40">
+                        <Ban className="h-3 w-3" />
+                        <span>Revoked</span>
+                      </span>
+                    )
+                  }
+                  if (activeConsent?.status === 'pending') {
+                    return (
+                      <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 uppercase font-bold text-[10px] tracking-wider bg-[var(--warn)]/15 text-[var(--warn)] border border-[var(--warn)]/40">
+                        <Clock className="h-3 w-3" />
+                        <span>Pending</span>
+                      </span>
+                    )
+                  }
+                  return (
+                    <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 uppercase font-bold text-[10px] tracking-wider bg-[var(--ok)]/15 text-[var(--ok)] border border-[var(--ok)]/40">
+                      <CheckCircle2 className="h-3 w-3" />
+                      <span>Active Grant</span>
                     </span>
+                  )
+                })()
 
-                    <div className="flex flex-wrap gap-1.5">
-                      {grp.defaultCategories.map((cat) => {
-                        const isCatActive = activeCats.includes(cat)
+                return (
+                  <div
+                    key={grp.key}
+                    data-testid={`consent-card-${grp.key}`}
+                    className={`rounded-[8px] border ${stripColor} p-5 space-y-4 transition-all shadow-2xs ${
+                      isActive
+                        ? 'border-[var(--line)] bg-[var(--paper)]'
+                        : 'border-[var(--line)]/70 bg-[var(--surface)] opacity-75'
+                    }`}
+                  >
+                    {/* Card Header: Icon, Group Name, Status Pill, Grant/Revoke Button */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={`rounded-[6px] p-2 border ${
+                            isActive
+                              ? 'border-[var(--ok)]/30 bg-[var(--ok)]/10 text-[var(--ok)]'
+                              : 'border-[var(--line)] bg-[var(--surface)] text-[var(--ink-soft)]'
+                          }`}
+                        >
+                          <IconComp className="h-5 w-5" />
+                        </div>
 
-                        return (
-                          <button
-                            key={cat}
-                            onClick={() => handleToggleCategory(grp, cat)}
-                            disabled={isProcessing}
-                            data-testid={`toggle-${grp.key}-${cat}`}
-                            className={`rounded-[4px] px-2 py-1 font-mono text-[11px] transition-all cursor-pointer flex items-center gap-1 ${
-                              isCatActive
-                                ? 'bg-[var(--teal)] text-white font-medium shadow-2xs'
-                                : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--ink-soft)] line-through opacity-70 hover:opacity-100'
-                            }`}
-                          >
-                            <span>{cat}</span>
-                            {isCatActive && <CheckCircle2 className="h-2.5 w-2.5" />}
-                          </button>
-                        )
-                      })}
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-serif font-bold text-base text-[var(--ink)]">
+                              {grp.label}
+                            </h3>
+                          </div>
+
+                          <div className="flex items-center gap-2 pt-1 font-mono text-[11px]">
+                            {statusPill}
+                            <span className="text-[var(--ink-soft)]">
+                              Purpose: <span className="text-[var(--ink)] capitalize font-semibold">{grp.purpose}</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Group Toggle / Action Button */}
+                      {isActive ? (
+                        <button
+                          onClick={() => handleRevokeGroup(grp.key)}
+                          disabled={isProcessing}
+                          data-testid={`btn-revoke-${grp.key}`}
+                          className="rounded-[6px] border border-[var(--alert)]/40 bg-[var(--alert)]/15 px-3 py-1.5 font-sans text-xs font-bold text-[var(--alert)] hover:bg-[var(--alert)] hover:text-white transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+                        >
+                          Revoke Group
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleGrantGroup(grp)}
+                          disabled={isProcessing}
+                          data-testid={`btn-grant-${grp.key}`}
+                          className="rounded-[6px] bg-[var(--ok)] px-3 py-1.5 font-sans text-xs font-bold text-white hover:bg-[var(--ok)]/90 transition-colors cursor-pointer shrink-0 disabled:opacity-50 shadow-xs"
+                        >
+                          Grant Access
+                        </button>
+                      )}
+                    </div>
+
+                    <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
+                      {grp.description}
+                    </p>
+
+                    {/* Category Toggles */}
+                    <div className="space-y-1.5 pt-2 border-t border-[var(--line)]">
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--ink-soft)] block font-semibold">
+                        Permitted Data Categories (Click to Toggle):
+                      </span>
+
+                      <div className="flex flex-wrap gap-1.5">
+                        {grp.defaultCategories.map((cat) => {
+                          const isCatActive = activeCats.includes(cat)
+
+                          return (
+                            <button
+                              key={cat}
+                              onClick={() => handleToggleCategory(grp, cat)}
+                              disabled={isProcessing}
+                              data-testid={`toggle-${grp.key}-${cat}`}
+                              className={`rounded-[4px] px-2.5 py-1 font-mono text-[11px] transition-all cursor-pointer flex items-center gap-1.5 ${
+                                isCatActive
+                                  ? 'bg-[var(--primary)] text-white font-bold shadow-xs'
+                                  : 'border border-[var(--line)] bg-[var(--surface)] text-[var(--ink-soft)] line-through opacity-70 hover:opacity-100'
+                              }`}
+                            >
+                              <span>{cat}</span>
+                              {isCatActive && <CheckCircle2 className="h-3 w-3" />}
+                            </button>
+                          )
+                        })}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
+                )
+              })}
+            </div>
+          )}
+        </div>
       </section>
 
       {/* SECTION 2: Access History Table (Calmer, larger, plainer styling with visible denials) */}
       <section
         data-testid="access-history-section"
-        className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-8 space-y-6 shadow-xs"
+        className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] overflow-hidden shadow-xs"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--line)] pb-4">
+        {/* Tinted Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--primary)]/20 bg-[var(--tint-teal)]/30 p-6">
           <div>
             <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-[var(--teal)]" />
+              <Clock className="h-5 w-5 text-[var(--primary)]" />
               <h2 className="font-serif text-xl font-bold text-[var(--ink)]">
                 Real-Time Access History
               </h2>
@@ -485,7 +516,7 @@ export function PortalPage() {
 
           {/* Outcome Filter Chips */}
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs text-[var(--ink-soft)] mr-1 flex items-center gap-1">
+            <span className="font-mono text-xs text-[var(--ink-soft)] mr-1 flex items-center gap-1 font-semibold">
               <Filter className="h-3.5 w-3.5" /> Filter:
             </span>
 
@@ -494,30 +525,30 @@ export function PortalPage() {
               data-testid="filter-audit-all"
               className={`rounded-[4px] px-3 py-1 font-mono text-xs transition-colors cursor-pointer ${
                 filterOutcome === 'all'
-                  ? 'bg-[var(--teal)] text-white font-semibold'
+                  ? 'bg-[var(--primary)] text-white font-bold shadow-xs'
                   : 'border border-[var(--line)] bg-[var(--paper)] text-[var(--ink-soft)] hover:text-[var(--ink)]'
               }`}
             >
-              All Access ({auditEntries.length})
+              All Access (<CountUp value={auditEntries.length} />)
             </button>
 
             <button
               onClick={() => setFilterOutcome('denials')}
               data-testid="filter-audit-denials"
-              className={`rounded-[4px] px-3 py-1 font-mono text-xs transition-colors cursor-pointer flex items-center gap-1.5 ${
+              className={`rounded-[4px] px-3 py-1 font-mono text-xs transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer flex items-center gap-1.5 ${
                 filterOutcome === 'denials'
-                  ? 'bg-[var(--alert-vermilion)] text-white font-semibold'
-                  : 'border border-[var(--line)] bg-[var(--paper)] text-[var(--alert-vermilion)] hover:bg-[var(--alert-vermilion)]/10'
+                  ? 'bg-[var(--alert)] text-white font-bold shadow-xs'
+                  : 'border border-[var(--alert)]/30 bg-[var(--alert)]/10 text-[var(--alert)] hover:bg-[var(--alert)]/20 font-bold'
               }`}
             >
               <AlertOctagon className="h-3.5 w-3.5" />
-              <span>Denials Visible ({totalDenialsCount})</span>
+              <span>Denials Visible (<CountUp value={totalDenialsCount} />)</span>
             </button>
 
             <button
               onClick={() => refetchAudit()}
               aria-label="Refresh audit history"
-              className="rounded-[4px] border border-[var(--line)] bg-[var(--paper)] p-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] cursor-pointer ml-1"
+              className="rounded-[4px] border border-[var(--line)] bg-[var(--paper)] p-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer ml-1"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${isFetchingAudit ? 'animate-spin' : ''}`} />
             </button>
@@ -525,114 +556,117 @@ export function PortalPage() {
         </div>
 
         {/* Access History Ledger Table */}
-        {isLoadingAudit ? (
-          <SkeletonCard lines={6} />
-        ) : filteredAudit.length === 0 ? (
-          <EmptyState
-            title="No access history records found"
-            description="No provider query events match the current filter."
-          />
-        ) : (
-          <div className="overflow-x-auto rounded-[8px] border border-[var(--line)] bg-[var(--paper)]">
-            <table className="w-full text-left font-sans text-sm border-collapse">
-              <thead>
-                <tr className="border-b border-[var(--line)] bg-[var(--surface)] text-xs font-mono uppercase tracking-wider text-[var(--ink-soft)]">
-                  <th className="py-3 px-4 font-semibold">Accessing Provider</th>
-                  <th className="py-3 px-4 font-semibold">Role</th>
-                  <th className="py-3 px-4 font-semibold">Purpose</th>
-                  <th className="py-3 px-4 font-semibold">Date & Time</th>
-                  <th className="py-3 px-4 font-semibold">Outcome</th>
-                  <th className="py-3 px-4 font-semibold">Categories & Reason</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--line)] text-xs">
-                {filteredAudit.map((row) => {
-                  const isDenied = row.decision === 'DENY' || row.decision === 'deny'
-                  const formattedTime = row.ts.replace('T', ' ').split('.')[0]
+        <div className="p-8">
+          {isLoadingAudit ? (
+            <SkeletonCard lines={6} />
+          ) : filteredAudit.length === 0 ? (
+            <EmptyState
+              title="No access history records found"
+              description="No provider query events match the current filter."
+              nextStep="Switch to Clinician or Billing role in the top bar to simulate data access queries."
+            />
+          ) : (
+            <div className="overflow-x-auto rounded-[8px] border border-[var(--line)] bg-[var(--paper)]">
+              <table className="w-full text-left font-sans text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-[var(--line)] bg-[var(--surface)] text-xs font-mono uppercase tracking-wider text-[var(--ink-soft)]">
+                    <th className="py-3 px-4 font-semibold">Accessing Provider</th>
+                    <th className="py-3 px-4 font-semibold">Role</th>
+                    <th className="py-3 px-4 font-semibold">Purpose</th>
+                    <th className="py-3 px-4 font-semibold">Date & Time</th>
+                    <th className="py-3 px-4 font-semibold">Outcome</th>
+                    <th className="py-3 px-4 font-semibold">Categories & Reason</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--line)] text-xs">
+                  {filteredAudit.map((row) => {
+                    const isDenied = row.decision === 'DENY' || row.decision === 'deny'
+                    const formattedTime = row.ts.replace('T', ' ').split('.')[0]
 
-                  return (
-                    <tr
-                      key={row.id}
-                      data-testid={`audit-row-${row.id}`}
-                      className={`transition-colors ${
-                        isDenied
-                          ? 'bg-[var(--alert-vermilion)]/5 hover:bg-[var(--alert-vermilion)]/10 border-l-2 border-l-[var(--alert-vermilion)]'
-                          : 'hover:bg-[var(--surface)]'
-                      }`}
-                    >
-                      {/* Provider / Actor */}
-                      <td className="py-3 px-4 font-mono font-medium text-[var(--ink)]">
-                        <span className="block font-semibold">{row.actor}</span>
-                        {row.clid && (
-                          <span className="text-[10px] text-[var(--teal)] block font-mono">
-                            CLID: {row.clid}
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Role */}
-                      <td className="py-3 px-4 capitalize font-mono text-[var(--ink-soft)]">
-                        {row.role}
-                      </td>
-
-                      {/* Purpose */}
-                      <td className="py-3 px-4 font-mono text-[var(--ink-soft)] capitalize">
-                        {row.role === 'billing' ? 'payment' : 'treatment'}
-                      </td>
-
-                      {/* Time */}
-                      <td className="py-3 px-4 font-mono text-[var(--ink-soft)] whitespace-nowrap">
-                        {formattedTime}
-                      </td>
-
-                      {/* Outcome (ALLOW / DENIED) */}
-                      <td className="py-3 px-4">
-                        <span
-                          data-testid={`outcome-${row.id}`}
-                          className={`inline-flex items-center gap-1 rounded px-2 py-0.5 uppercase font-mono text-[10px] font-bold tracking-wider ${
-                            isDenied
-                              ? 'bg-[var(--alert-vermilion)]/15 text-[var(--alert-vermilion)] border border-[var(--alert-vermilion)]/30'
-                              : 'bg-[var(--ok)]/15 text-[var(--ok)] border border-[var(--ok)]/30'
-                          }`}
-                        >
-                          {isDenied ? (
-                            <>
-                              <ShieldAlert className="h-3 w-3 shrink-0" />
-                              <span>DENIED</span>
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle2 className="h-3 w-3 shrink-0" />
-                              <span>ALLOWED</span>
-                            </>
+                    return (
+                      <tr
+                        key={row.id}
+                        data-testid={`audit-row-${row.id}`}
+                        className={`transition-colors ${
+                          isDenied
+                            ? 'bg-[var(--alert)]/5 hover:bg-[var(--alert)]/10 border-l-4 border-l-[var(--alert)]'
+                            : 'hover:bg-[var(--surface)]'
+                        }`}
+                      >
+                        {/* Provider / Actor */}
+                        <td className="py-3 px-4 font-mono font-medium text-[var(--ink)]">
+                          <span className="block font-semibold">{row.actor}</span>
+                          {row.clid && (
+                            <span className="text-[10px] text-[var(--primary)] block font-mono font-bold">
+                              CLID: {row.clid}
+                            </span>
                           )}
-                        </span>
-                      </td>
+                        </td>
 
-                      {/* Categories & Reason */}
-                      <td className="py-3 px-4 max-w-sm">
-                        <div className="font-mono text-[11px] text-[var(--ink)]">
-                          <span className="font-semibold">{row.categories || row.action}</span>
-                        </div>
-                        {row.reason && (
-                          <p
-                            className={`font-sans text-[11px] pt-0.5 leading-snug ${
+                        {/* Role */}
+                        <td className="py-3 px-4 capitalize font-mono text-[var(--ink-soft)]">
+                          {row.role}
+                        </td>
+
+                        {/* Purpose */}
+                        <td className="py-3 px-4 font-mono text-[var(--ink-soft)] capitalize">
+                          {row.role === 'billing' ? 'payment' : 'treatment'}
+                        </td>
+
+                        {/* Time */}
+                        <td className="py-3 px-4 font-mono text-[var(--ink-soft)] whitespace-nowrap">
+                          {formattedTime}
+                        </td>
+
+                        {/* Outcome (ALLOW / DENIED) */}
+                        <td className="py-3 px-4">
+                          <span
+                            data-testid={`outcome-${row.id}`}
+                            className={`inline-flex items-center gap-1 rounded px-2.5 py-0.5 uppercase font-mono text-[10px] font-bold tracking-wider ${
                               isDenied
-                                ? 'text-[var(--alert-vermilion)] font-medium'
-                                : 'text-[var(--ink-soft)]'
+                                ? 'bg-[var(--alert)]/15 text-[var(--alert)] border border-[var(--alert)]/40'
+                                : 'bg-[var(--ok)]/15 text-[var(--ok)] border border-[var(--ok)]/40'
                             }`}
                           >
-                            {row.reason}
-                          </p>
-                        )}
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+                            {isDenied ? (
+                              <>
+                                <ShieldAlert className="h-3 w-3 shrink-0" />
+                                <span>DENIED</span>
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle2 className="h-3 w-3 shrink-0" />
+                                <span>ALLOWED</span>
+                              </>
+                            )}
+                          </span>
+                        </td>
+
+                        {/* Categories & Reason */}
+                        <td className="py-3 px-4 max-w-sm">
+                          <div className="font-mono text-[11px] text-[var(--ink)]">
+                            <span className="font-semibold">{row.categories || row.action}</span>
+                          </div>
+                          {row.reason && (
+                            <p
+                              className={`font-sans text-[11px] pt-0.5 leading-snug ${
+                                isDenied
+                                  ? 'text-[var(--alert)] font-medium'
+                                  : 'text-[var(--ink-soft)]'
+                              }`}
+                            >
+                              {row.reason}
+                            </p>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </section>
     </div>
   )
